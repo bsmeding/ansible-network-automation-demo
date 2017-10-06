@@ -1,0 +1,4 @@
+---
+
+- name: Generate global configuration
+  template: src=global.j2 dest=./CFGS/output/{{inventory_hostname}}.global

@@ -1,0 +1,4 @@
+---
+
+- name: Generate VLAN configuration
+  template: src=vlan.j2 dest=./CFGS/output/{{inventory_hostname}}.vlan

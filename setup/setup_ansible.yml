@@ -1,0 +1,71 @@
+---
+- name: Install Packages
+  hosts: servers-ansible
+  become: true
+  vars:
+    python_packages_to_install:
+       - virtualenv
+       - ansible
+       - netmiko
+       - gitpull
+       - pysnmp
+       - paramiko
+       - jsonrpclib
+       - pygal
+       - pylint
+       - pep8
+       - flake8
+       - pylama
+       - ciscoconfparse
+       - pexpect
+       - ntc-ansible
+       - napalm
+#       - docker-py
+#       - docker-compose
+  tasks:
+  - name: install APT packages
+    apt: name={{item}} state=latest update_cache=yes
+    with_items:
+    - git
+    - python-pip
+    - dirmngr
+    - virtualenv
+  - name: "Install Python packages: {{ python_packages_to_install }}"
+    pip: name="{{ python_packages_to_install | join(' ') }}"
+    with_items: python_packages_to_install
+
+
+
+  # Install apt-http
+  - name: Install APT-http-transport
+    apt:
+      name: apt-transport-https
+      update_cache: yes
+
+  # Adds the apt-key for Virtualbox
+  - name: Add Virtualbox Oracle apt-key
+    apt_key:
+      url: "https://www.virtualbox.org/download/oracle_vbox_2016.asc"
+      state: present
+
+  # Add the Virtualbox  APT-repository
+  - name: Adding Elasticsearch APT repository
+    apt_repository:
+      repo: deb http://download.virtualbox.org/virtualbox/debian stretch contrib
+      state: present
+
+  # Install Virtualbox 5.1
+  - name: Update repositories cache and install Virtualbox 5.1
+    apt:
+      name: virtualbox-5.1
+      update_cache: yes
+
+  # Install Vagrant
+  - name: Install Vagrant 
+    apt:
+      name: vagrant
+
+  # Install Desktop GIU for Virtualbox management
+  - name: Install LXDE desktop GIU 
+    apt:
+      name: lxde-core

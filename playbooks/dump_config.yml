@@ -1,0 +1,40 @@
+---
+- name: Save Configurations (IOS)
+  hosts: cisco
+  gather_facts: no
+  vars:
+    date: "{{ lookup('pipe', 'date +%Y%m%d-%H%M') }}"
+  tasks:
+    - ios_command:
+        provider: "{{ creds_core_ssh }}"
+        commands: show run
+      register: show_run
+
+    - copy:
+        content: "{{ show_run.stdout[0] }}"
+        dest: "./CFGS/backups/{{ inventory_hostname }}-{{ date }}.txt"
+  tags: ios
+
+#Arista
+- name: Save running config to file (Arista)
+  hosts: arista
+  gather_facts: no
+  vars:
+    date: "{{ lookup('pipe', 'date +%Y%m%d-%H%M') }}"
+  tasks:
+    - eos_command:
+        provider: "{{ creds_core_eapi }}"
+        commands: show running-config
+#        encoding: text
+      register: show_run
+
+    - debug:
+        msg: show_run
+
+    - copy:
+        content: "{{  show_run.output[0].result.output }}"
+        dest: "./CFGS/backups/{{ inventory_hostname }}-{{ date }}.txt"
+
+  tags: arista
+
+

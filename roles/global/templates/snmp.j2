@@ -1,0 +1,7 @@
+snmp-server community {{ snmp_ro_community }} RO
+snmp-server trap-source {{ management_interface }}
+snmp-server contact {{ snmp_contact }}
+{% for server in snmp_servers %}
+snmp-server host {{ server.ip }} {{ server.community }}
+{% endfor %}
+snmp ifmib ifindex persist

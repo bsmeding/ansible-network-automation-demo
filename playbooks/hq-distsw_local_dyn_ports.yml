@@ -1,0 +1,9 @@
+---
+- hosts: hq-distsw01
+  gather_facts: false
+  connection: local
+
+- name: Generate global configuration
+  template: src=templates/hq-distsw_dyn_ports.j2 dest=./CFGS/output/{{inventory_hostname}}.full
+
+

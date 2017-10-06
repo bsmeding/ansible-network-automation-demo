@@ -1,0 +1,5 @@
+ip ssh maxstartups 4
+ip ssh time-out 60
+ip ssh authentication-retries {{ ssh_max_auth }}
+ip ssh source-interface {{ management_interface }}
+ip ssh version {{ ssh_version }}

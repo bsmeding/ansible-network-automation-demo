@@ -1,0 +1,5 @@
+---
+
+- name: Generate access-ports config
+  template: src=access-ports.j2 dest=./CFGS/output/{{inventory_hostname}}.accces-ports
+  when: access_ports is defined

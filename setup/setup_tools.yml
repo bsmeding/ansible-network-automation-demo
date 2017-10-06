@@ -1,0 +1,49 @@
+---
+- name: Install main packages
+  hosts: man-servers
+  tasks:
+  - name: install packages
+    apt: name={{item}} state=latest update_cache=yes
+    with_items:
+    - git
+    - python-pip
+    - htop
+    - virtualbox
+    - vagrant
+    - virtualbox-dkms
+#    - docker-io
+  become: true
+
+- name: Run docker.ubuntu
+  hosts: tools
+  roles:
+    - angstwad.docker_ubuntu
+  become: true
+
+
+- name: MySQL container
+  hosts: tools
+  tasks:
+    - name: Check directory storing MySQL
+      file:
+        path: /data/librenms-mysql
+        state: directory
+        mode: 0755
+    - name: Installing Docker container librenms-mysql
+      docker_container:
+        name: librenms-mysql
+        image: mariadb
+        state: started
+        pull: false
+        ports:
+        - "127.0.0.1:3306:3306"
+        volumes:
+        - "/data/librenms-mysql:/var/lib/mysql"
+        env:
+            MYSQL_ROOT_PASSWORD: yaworks-demo-mysql-root
+
+  become: true
+
+
+
+# docker run --name some-app --link some-mariadb:mysql -d application-that-uses-mysql

@@ -1,0 +1,25 @@
+{% include "services.j2" %}
+!
+hostname {{ inventory_hostname }}
+ip domain-name {{ domain_name }}
+!
+crypto key generate rsa modulus 2048
+!
+{% include "aaa.j2" %}
+!
+clock timezone {{ time_zone }}
+clock summer-time CET recurring {{ time_zone_st_start}} {{ time_zone_st_end }}
+!
+ip domain-name {{ domain_name }}
+no ip domain-lookup
+!
+{% include "logging.j2" %}
+!
+{% include "snmp.j2" %}
+!
+{% include "ntp.j2" %}
+!
+{% include "ssh.j2" %}
+!
+{% include "vty.j2" %}
+

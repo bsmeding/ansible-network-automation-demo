@@ -1,0 +1,7 @@
+username {{ device_ssh_user }} privilege 15 secret {{ device_ssh_password }}
+enable secret {{ device_enable_secret }}
+aaa new-model
+aaa authentication login default local
+aaa authorization exec default local
+aaa session-id common
+

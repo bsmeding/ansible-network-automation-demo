@@ -1,0 +1,342 @@
+Building configuration...
+
+Current configuration : 6167 bytes
+!
+version 15.1
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname hq-distsw01
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 4 X4ZqtPJ///KxuEWxHSsJrv3beQVnz2ise/xj8fF6eFU
+!
+username yaworks privilege 15 secret 4 8dRFP1J9O6GAqxXpGW7e0ZKm5h2ssUShP3mvb.0eKic
+username yaworks-******** privilege 15 secret 4 X4ZqtPJ///KxuEWxHSsJrv3beQVnz2ise/xj8fF6eFU
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local 
+!
+!
+!
+!
+!
+aaa session-id common
+clock timezone CET 1 0
+clock summer-time CET recurring last Sun Mar 2:00 last Sun Oct 3:00
+!
+ip cef
+!
+!
+no ip domain-lookup
+ip domain-name yaworks-demo.local
+login on-failure log
+login on-success log
+no ipv6 cef
+ipv6 multicast rpf use-bgp
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+!
+!
+vlan internal allocation policy ascending
+!
+ip ssh maxstartups 4
+ip ssh time-out 60
+ip ssh authentication-retries 2
+ip ssh source-interface Loopback0
+ip ssh version 2
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.199.10.3 255.255.255.255
+!
+interface Ethernet0/0
+ description Naar HQ-R1
+ switchport access vlan 11
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 11
+ switchport mode trunk
+ duplex auto
+ spanning-tree portfast trunk
+!
+interface Ethernet0/1
+ description Naar HQ-R2
+ switchport access vlan 12
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 12
+ switchport mode trunk
+ duplex auto
+ spanning-tree portfast trunk
+!
+interface Ethernet0/2
+ switchport access vlan 10
+ switchport mode access
+ switchport voice vlan 20
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet0/3
+ duplex auto
+!
+interface Ethernet1/0
+ description Management
+ no switchport
+ ip address 172.16.0.254 255.255.255.0
+ spanning-tree portfast
+!
+interface Ethernet1/1
+ switchport access vlan 10
+ switchport mode access
+ switchport voice vlan 20
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet1/2
+ switchport access vlan 10
+ switchport mode access
+ switchport voice vlan 20
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet1/3
+ duplex auto
+!
+interface Ethernet2/0
+ switchport access vlan 30
+ switchport mode access
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet2/1
+ switchport access vlan 30
+ switchport mode access
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet2/2
+ switchport access vlan 30
+ switchport mode access
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet2/3
+ duplex auto
+!
+interface Ethernet3/0
+ switchport access vlan 50
+ switchport mode access
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet3/1
+ switchport access vlan 50
+ switchport mode access
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet3/2
+ switchport access vlan 50
+ switchport mode access
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet3/3
+ duplex auto
+!
+interface Ethernet4/0
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet4/1
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet4/2
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet4/3
+ duplex auto
+!
+interface Ethernet5/0
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet5/1
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet5/2
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet5/3
+ duplex auto
+!
+interface Ethernet6/0
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet6/1
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet6/2
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet6/3
+ duplex auto
+!
+interface Ethernet7/0
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet7/1
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet7/2
+ description NotInUse
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ duplex auto
+ spanning-tree portfast
+!
+interface Ethernet7/3
+ duplex auto
+!
+interface Vlan1
+ ip address 10.0.10.10 255.255.255.0
+!
+interface Vlan11
+ ip address 10.0.11.1 255.255.255.248
+!
+interface Vlan12
+ ip address 10.0.11.9 255.255.255.248
+ shutdown
+!
+router ospf 100
+ router-id 10.199.10.3
+ redistribute static subnets
+ redistribute bgp 1 subnets
+ passive-interface default
+ no passive-interface Vlan11
+ no passive-interface Vlan12
+ network 0.0.0.0 255.255.255.255 area 0
+!
+router bgp 1
+ bgp log-neighbor-changes
+ network 10.0.10.0
+ aggregate-address 10.0.10.0 255.255.255.0
+ timers bgp 1 5
+ neighbor RR-CLIENTS peer-group
+ neighbor RR-CLIENTS remote-as 1
+ neighbor RR-CLIENTS update-source Loopback0
+ neighbor RR-CLIENTS route-reflector-client
+ neighbor 10.199.10.1 peer-group RR-CLIENTS
+ neighbor 10.199.10.2 peer-group RR-CLIENTS
+!
+ip default-gateway 10.0.10.254
+!
+no ip http server
+!
+ip route 0.0.0.0 0.0.0.0 10.0.10.254
+!
+logging trap notifications
+logging source-interface Loopback0
+logging host 172.16.0.10
+!
+!
+snmp-server community yaworks-RO RO
+snmp-server trap-source Loopback0
+snmp-server contact YaWorks-********
+snmp-server host 172.16.0.10 yaworks-snmp 
+snmp ifmib ifindex persist
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ exec-timeout 30 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ exec-timeout 30 0
+ password 7 141B1D0C050A
+ transport input telnet ssh
+!
+ntp source Loopback0
+ntp update-calendar
+ntp server 172.16.0.10
+end

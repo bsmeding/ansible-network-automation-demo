@@ -1,0 +1,38 @@
+# common device platform for if / else config
+platform: cisco_ios
+
+#global
+time_zone: CET 1
+time_zone_st_start: last Sun Mar 2:00
+time_zone_st_end: last Sun Oct 3:00
+domain_name: yaworks.demo
+
+
+#aaa
+device_ssh_user: provisioning
+device_ssh_password: admin
+device_enable_secret: admin
+
+#logging
+management_interface: loopback0
+syslog_server: 172.16.0.10
+
+#ntp
+#management_interface
+ntp_server_ip: 172.16.0.11
+
+#snmp
+#management_interface
+snmp_ro_community: yaworks-RO
+snmp_contact: YaWorks-admin
+snmp_servers:
+  - ip: 172.16.0.10
+    community: yaworks-snmp
+
+#ssh
+#management_interface
+ssh_version: 2
+ssh_max_auth: 2
+
+#vty
+vty_transport_input: telnet ssh

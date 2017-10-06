@@ -1,0 +1,7 @@
+---
+- hosts: routers
+  gather_facts: false
+  connection: local
+  tasks:
+  - name: Generate global configuration
+    template: src=templates/routers_full_config.j2 dest=./CFGS/output/{{inventory_hostname}}.full    

@@ -1,0 +1,21 @@
+---
+ 
+- name: Show BGP summary on Routers
+  hosts: hq-r1:b1-r1
+  connection: local
+  gather_facts: False
+ 
+  tasks:
+    - name: Get BGP info
+      ntc_show_command:
+        connection: ssh
+        platform: cisco_ios
+        template_dir: /home/bsmeding/ansible-extras/ntc-ansible/ntc-templates/templates
+        command: 'show ip interface brief'
+        host: "{{ inventory_hostname }}"  
+        username: "{{ device_ssh_user }}"
+        password: "{{ device_ssh_password }}"
+      register: results
+ 
+    - debug: var=results.response
+

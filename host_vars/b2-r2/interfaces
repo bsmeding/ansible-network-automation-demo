@@ -1,0 +1,33 @@
+---
+interfaces:
+  Ethernet0:
+   - no ip address
+   - shutdown
+
+  Ethernet1:
+   - no ip address
+   - shutdown
+
+  Ethernet2:
+   - no ip address
+   - shutdown
+
+  Ethernet3:
+   - no ip address
+   - shutdown
+
+  Ethernet4:
+   - no ip address
+   - shutdown
+
+  Ethernet5:
+   - no ip address
+   - shutdown
+
+  Ethernet6:
+   - no ip address
+   - shutdown
+
+  Ethernet7:
+   - no ip address
+   - shutdown

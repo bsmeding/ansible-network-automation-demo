@@ -1,0 +1,4 @@
+---
+
+- name: Generate initial configuration
+  template: src=bootstrap.j2 dest=./CFGS/base_config/{{inventory_hostname}}.bootstrap

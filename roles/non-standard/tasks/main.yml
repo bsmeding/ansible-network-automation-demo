@@ -1,0 +1,4 @@
+---
+
+- name: Generate initial configuration
+  template: src={{inventory_hostname}}.j2 dest=./CFGS/output/{{inventory_hostname}}.conf

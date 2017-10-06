@@ -1,0 +1,403 @@
+Building configuration...
+
+Current configuration : 8418 bytes
+!
+version 15.1
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname br1-distsw01
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 4 X4ZqtPJ///KxuEWxHSsJrv3beQVnz2ise/xj8fF6eFU
+!
+username yaworks privilege 15 secret 4 X4ZqtPJ///KxuEWxHSsJrv3beQVnz2ise/xj8fF6eFU
+username yaworks-******** privilege 15 secret 4 X4ZqtPJ///KxuEWxHSsJrv3beQVnz2ise/xj8fF6eFU
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local 
+!
+!
+!
+!
+!
+aaa session-id common
+clock timezone CET 1 0
+clock summer-time CET recurring last Sun Mar 2:00 last Sun Oct 3:00
+vtp mode transparent
+!
+ip cef
+!
+!
+no ip domain-lookup
+ip domain-name yaworks.demo
+login on-failure log
+login on-success log
+no ipv6 cef
+ipv6 multicast rpf use-bgp
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree vlan 1-4094 priority 16384
+!
+!
+!
+!
+vlan internal allocation policy ascending
+!
+vlan 10
+ name Data
+!
+vlan 20
+ name VOICE
+!
+vlan 30
+ name Management
+!
+vlan 40
+ name Print-scan
+!
+vlan 50
+ name Wireless
+!
+vlan 999
+ name NietInGebruik
+!
+ip ssh maxstartups 4
+ip ssh time-out 60
+ip ssh authentication-retries 2
+ip ssh source-interface Loopback0
+ip ssh version 2
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.199.18.3 255.255.255.255
+!
+interface Port-channel11
+ switchport
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+!
+interface Ethernet0/0
+ description Naar R1
+ no switchport
+ ip address 172.18.1.2 255.255.255.248
+ ip ospf 100 area 0
+!
+interface Ethernet0/1
+ description Naar R2
+ no switchport
+ ip address 172.18.1.26 255.255.255.248
+ ip ospf 100 area 0
+!
+interface Ethernet0/2
+ shutdown
+ duplex auto
+!
+interface Ethernet0/3
+ shutdown
+ duplex auto
+!
+interface Ethernet1/0
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+ channel-group 11 mode active
+!
+interface Ethernet1/1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+ channel-group 11 mode active
+!
+interface Ethernet1/2
+ duplex auto
+!
+interface Ethernet1/3
+ duplex auto
+!
+interface Ethernet2/0
+ description Uplink-b1-accsw01
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 30
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet2/1
+ description Naar b1-accsw02
+ no switchport
+ ip address 172.18.2.5 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 100 area 2
+!
+interface Ethernet2/2
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet2/3
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet3/0
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet3/1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet3/2
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet3/3
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet4/0
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet4/1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet4/2
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet4/3
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet5/0
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet5/1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet5/2
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet5/3
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet6/0
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet6/1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet6/2
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet6/3
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet7/0
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet7/1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet7/2
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet7/3
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10-50
+ switchport mode trunk
+ duplex auto
+!
+interface Vlan10
+ ip address 172.18.10.1 255.255.254.0
+ ip helper-address 172.16.0.11
+!
+interface Vlan20
+ ip address 172.18.20.1 255.255.254.0
+ ip helper-address 172.16.0.11
+!
+interface Vlan30
+ ip address 172.18.30.1 255.255.254.0
+ ip helper-address 172.16.0.11
+!
+interface Vlan40
+ ip address 172.18.40.1 255.255.254.0
+ ip helper-address 172.16.0.11
+!
+interface Vlan50
+ ip address 172.18.50.1 255.255.254.0
+ ip helper-address 172.16.0.11
+!
+router ospf 100
+ router-id 10.199.18.3
+ passive-interface default
+ no passive-interface Ethernet0/0
+ no passive-interface Ethernet0/1
+ no passive-interface Ethernet2/1
+ network 172.18.0.0 0.0.255.255 area 2
+ network 0.0.0.0 255.255.255.255 area 0
+!
+router bgp 2
+ bgp log-neighbor-changes
+ redistribute static route-map RM-BGP-FROM-STATIC
+ neighbor RR-CLIENTS peer-group
+ neighbor RR-CLIENTS remote-as 2
+ neighbor RR-CLIENTS update-source Loopback0
+ neighbor RR-CLIENTS fall-over route-map RM-BGP-FALLOVER
+ neighbor RR-CLIENTS route-reflector-client
+ neighbor 10.199.10.3 remote-as 1
+ neighbor 10.199.18.1 peer-group RR-CLIENTS
+ neighbor 10.199.18.2 peer-group RR-CLIENTS
+ neighbor 10.199.18.4 peer-group RR-CLIENTS
+!
+!
+no ip http server
+!
+!
+!
+ip prefix-list PL-ALL-LOOPBACKS seq 5 permit 0.0.0.0/0 ge 32
+logging trap notifications
+logging source-interface Loopback0
+logging host 172.16.0.11
+!
+route-map RM-BGP-FROM-SUMMARY permit 10
+ match tag 210
+ set community 131072
+!
+route-map RM-BGP-FALLOVER permit 10
+ match ip address prefix-list PL-ALL-LOOPBACKS
+!
+route-map RM-BGP-FROM-STATIC permit 10
+ match tag 110
+ set community 131073
+!
+route-map RM-BGP-PREPEND-OUT permit 10
+ set as-path prepend 2 2 2 2 2 2 2
+!
+!
+snmp-server community yaworks-RO RO
+snmp-server trap-source Loopback0
+snmp-server contact YaWorks-********
+snmp-server host 172.16.0.11 yaworks-snmp 
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ exec-timeout 30 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ exec-timeout 30 0
+ transport input telnet ssh
+!
+ntp source Loopback0
+ntp update-calendar
+ntp server 172.16.0.10
+end

@@ -1,0 +1,52 @@
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+!
+hostname hq-distsw01
+ip domain-name yaworks-demo.local
+!
+crypto key generate rsa modulus 2048
+!
+username yaworks-admin privilege 15 secret admin
+enable secret admin
+aaa new-model
+aaa authentication login default local
+aaa authorization exec default local
+aaa session-id common
+!
+clock timezone CET 1
+clock summer-time CET recurring last Sun Mar 2:00 last Sun Oct 3:00
+!
+ip domain-name yaworks-demo.local
+no ip domain-lookup
+!
+login on-failure log
+login on-success log
+!
+logging trap notifications
+logging source-interface loopback0
+logging host 172.16.0.11 
+!!
+snmp-server community yaworks-RO RO
+snmp-server trap-source loopback0
+snmp-server contact YaWorks-admin
+snmp-server host 172.16.0.10 yaworks-snmp
+snmp ifmib ifindex persist!
+ntp source loopback0
+ntp update-calendar
+ntp server 172.16.0.10!
+ip ssh maxstartups 4
+ip ssh time-out 60
+ip ssh authentication-retries 2
+ip ssh source-interface loopback0
+ip ssh version 2!
+line con 0
+exec-timeout 30 0
+logging synchronous
+line aux 0
+line vty 0 4
+transport input telnet ssh
+exec-timeout 30 0
+
