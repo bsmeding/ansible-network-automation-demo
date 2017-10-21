@@ -1,0 +1,3 @@
+---
+device_ssh_password: admin
+device_enable_secret: admin

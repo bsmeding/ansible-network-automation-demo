@@ -1,0 +1,24 @@
+---
+- name: Run traceroute commands
+  hosts: hq-r1:b1-r1:b2-r1
+  gather_facts: false
+  remote_user: yaworks-admin
+
+  vars:
+    loopbacks:
+      router:
+        hostname: hq-r1
+        ip: 10.199.10.1
+      b1-r1: 10.199.18.1
+      b2-r1: 10.199.19.1
+
+  tasks:
+
+    - name: run traceroute to every other host
+      raw: traceroute {{ item.value }} source Loopback0 probe 1 numeric
+      when: item.key != inventory_hostname
+      with_items: loopbacks
+      register: trace_result
+
+#    - name: Debug registered variables
+#      debug: var=trace_result

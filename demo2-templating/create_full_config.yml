@@ -1,0 +1,18 @@
+---
+- name: Check connect
+  hosts: b1-accsw01
+  tasks:
+    - name: Test connectivity (Ansible_core)
+      ios_facts:
+        provider: "{{ creds_core_ssh }}"
+
+    - name: Test connectivity (NAPALM)
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+
+    - name: Generate Full template
+      template:
+        src: templates/b1-accsw01_full.j2
+        dest: "CFGS/{{ inventory_hostname }}/{{ inventory_hostname}}.full.confg"
+      tags: template
+

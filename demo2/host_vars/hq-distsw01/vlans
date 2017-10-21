@@ -1,0 +1,8 @@
+---
+vlans:
+  11: HQ-R1
+  12: HQ-R2
+  100: Frontend-DMZ
+  200: Backend
+  300: Management
+  999: DISABELD

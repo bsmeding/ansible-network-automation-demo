@@ -1,0 +1,20 @@
+---
+- hosts: hq
+  gather_facts: false
+  connection: local
+  roles:
+    - global
+
+- hosts: routers-hq
+  gather_facts: false
+  connection: local
+  roles:
+    - routing
+    - wan-qos
+
+- hosts: switches-hq
+  gather_facts: false
+  connection: local
+  roles:
+    - access-ports
+    - vlans

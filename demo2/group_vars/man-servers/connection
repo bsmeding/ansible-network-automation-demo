@@ -1,0 +1,7 @@
+---
+ansible_connection: ssh
+ansible_user: ansible
+ansible_ssh_pass: '@ns1ble'
+ansible_sudo_pass: '@ns1ble' 
+#ansible_become_user: "{{ ansible_user }}"
+#ansible_become_pass: "{{ ansible_ssh_pass }}"

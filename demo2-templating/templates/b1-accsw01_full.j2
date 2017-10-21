@@ -1,0 +1,45 @@
+{% include "ios_services.j2" %}
+!
+hostname {{ inventory_hostname }}
+!
+boot-start-marker
+boot-end-marker
+!
+!
+{% include "ios_aaa.j2" %}
+{% include "ios_clock.j2" %}
+no ipv6 cef
+ipv6 multicast rpf use-bgp
+!
+{% include "ios_domain.j2" %}
+ip cef
+!
+!
+{% include "ios_logging.j2" %}
+!
+{% include "ios_vlans.j2" %}
+!
+{% include "ios_ssh.j2" %}
+!
+{% include "ios_interfaces.j2" %}
+!
+{% include "ios_ospf.j2" %}
+!
+ip default-gateway 172.18.30.1
+!
+no ip http server
+!
+!
+{% include "ios_logging_destination.j2" %}
+!
+{% include "ios_snmp.j2" %}
+!         
+!
+!
+control-plane
+!
+!
+{% include "ios_vty.j2" %}
+!
+{% include "ios_ntp.j2" %}
+

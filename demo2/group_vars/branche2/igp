@@ -1,0 +1,12 @@
+---
+ospf:
+  processid: 100
+  global:
+    - default auto-cost reference-bandwidth 100000
+    - network 0.0.0.0 255.255.255.255 area 0
+    - passive-interface default
+
+ospf_intf_list:
+  b2-distsw01: [Vlan11, Vlan12]
+  b2-r1: [Eth0/1.11]
+  b2-r2: [Eth0/1.12]

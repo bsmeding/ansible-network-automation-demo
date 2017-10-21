@@ -1,0 +1,16 @@
+---
+management_interface: Loopback0
+
+external_interface_bw:
+  hq-r1:
+    Ethernet0/0: 10000
+  hq-r2:
+    Ethernet0/0: 5000
+  b1-r1:
+    Ethernet0/0: 10000
+  b1-r2:
+    Ethernet0/0: 5000
+  b2-r1:
+    Ethernet0/0: 10000
+  b2-r2:
+    Ethernet0/0: 5000

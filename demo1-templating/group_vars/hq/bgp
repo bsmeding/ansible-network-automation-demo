@@ -1,0 +1,28 @@
+---
+site_ASN: 1
+site_summary_subnet: 10.0.10.0/24
+
+ebgp_peers:
+  hq-r1:
+    10.199.10.3:
+      - remote-as 1
+    1.1.1.18:
+      - remote-as 2
+    1.1.1.19:
+      - remote-as 3
+  hq-r2:
+    10.199.10.3:
+      - remote-as 1  
+    2.2.2.18:
+      - remote-as 2
+      - route-map RM-BGP-PREPEND-OUT out
+    2.2.2.19:
+      - remote-as 3
+      - route-map RM-BGP-PREPEND-OUT out
+  hq-distsw01:
+    10.199.10.1:
+      - remote-as 1
+      - update-source Loopback0
+    10.199.10.2:
+      - remote-as 1
+      - update-source Loopback0
