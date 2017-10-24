@@ -1,5 +1,0 @@
----
-ansible_connection: local
-ansible_user: ansible
-ansible_ssh_pass: '@ns1ble'
-ansible_sudo_pass: '@ns1ble'

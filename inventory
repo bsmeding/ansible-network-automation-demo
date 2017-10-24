@@ -22,6 +22,12 @@ routers-hq
 routers-branche1
 routers-branche2
 
+[routers-extern]
+hq-r1-ext ansible_host=10.0.10.1
+hq-r2-ext ansible_host=10.0.10.2
+b1-r1-ext ansible_host=1.1.1.18
+b2-r1-ext ansible_host=1.1.1.19
+
 [switches:children]
 switches-hq
 distsw-branche1
@@ -31,11 +37,13 @@ accsw-branche2
 
 [core-switches]
 hq-distsw01
+b1-distsw01
 
-#### GROUP PER PLATFORM
+#### GROUP PER PLATFORM  {{ Nodig voor provider settings
 [cisco]
 hq-distsw01
 hq-r1
+hq-r2
 b1-r1
 b1-distsw01
 b1-accsw01
@@ -56,11 +64,11 @@ accsw-branche2
 
 ##### HQ DEVICES
 [routers-hq]
-hq-r1 ansible_host=10.0.10.1
-hq-r2 ansible_host=10.0.10.2
+hq-r1 ansible_host=10.199.10.1
+hq-r2 ansible_host=10.199.10.2
 
 [switches-hq]
-hq-distsw01 ansible_host=10.0.10.10
+hq-distsw01 ansible_host=10.199.10.3
 
 
 ###### DEVICES BRANCHE -1   10.199.<BRANCHE-ID>.1-10
@@ -68,19 +76,19 @@ hq-distsw01 ansible_host=10.0.10.10
 b1-r1 ansible_host=10.199.18.1
 b1-r2 ansible_host=10.199.18.2
 
-[distsw-branche1]		#   10.199.<BRANCHE-ID>.1-10 (routing)      10.199.<BRANCHE-ID>.11-20 (non-routing)
+[distsw-branche1]		#   TOR Switches 10.199.<BRANCHE-ID>.1-10 (L3)      10.199.<BRANCHE-ID>.11-20 (L2)
 b1-distsw01 ansible_host=10.199.18.3
 b1-distsw02 ansible_host=10.199.18.4
 
-[accsw-branche1]		#    172.<BRANCHE-ID>.<MNMT-SUBN>.21-50
-b1-accsw01 ansible_host=172.18.30.21
-b1-accsw02 ansible_host=172.18.30.22
+[accsw-branche1]		#   SPINE Switches  172.<BRANCHE-ID>.<MNMT-SUBN>.21-50
+b1-accsw01 ansible_host=10.199.18.21
+b1-accsw02 ansible_host=10.199.18.22
 b1-accsw03 ansible_host=172.18.30.23
-b1-accsw04 ansible_host=172.18.30.24
-b1-accsw05 ansible_host=172.18.30.25
-b1-accsw06 ansible_host=172.18.30.26
-b1-accsw07 ansible_host=172.18.30.27
-b1-accsw08 ansible_host=172.18.30.28
+b1-accsw04 ansible_host=10.199.18.24
+b1-accsw05 ansible_host=10.199.18.25
+b1-accsw06 ansible_host=10.199.18.26
+b1-accsw07 ansible_host=10.199.18.27
+b1-accsw08 ansible_host=10.199.18.28
 
 
 ###### DEVICES BRANCHE-2
@@ -93,14 +101,14 @@ b2-distsw01 ansible_host=10.199.19.3
 b2-distsw02 ansible_host=10.199.19.4
 
 [accsw-branche2]
-b2-accsw01 ansible_host=172.19.30.21
-b2-accsw02 ansible_host=172.19.30.22
-b2-accsw03 ansible_host=172.19.30.23
-b2-accsw04 ansible_host=172.19.30.24
-b2-accsw05 ansible_host=172.19.30.25
-b2-accsw06 ansible_host=172.19.30.26
-b2-accsw07 ansible_host=172.19.30.27
-b2-accsw08 ansible_host=172.19.30.28
+b2-accsw01 ansible_host=10.199.19.21
+b2-accsw02 ansible_host=10.199.19.22
+b2-accsw03 ansible_host=10.199.19.23
+b2-accsw04 ansible_host=10.199.19.24
+b2-accsw05 ansible_host=10.199.19.25
+b2-accsw06 ansible_host=10.199.19.26
+b2-accsw07 ansible_host=10.199.19.27
+b2-accsw08 ansible_host=10.199.19.28
 
 
 ###### Management Servers
