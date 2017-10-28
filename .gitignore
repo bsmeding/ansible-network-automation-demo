@@ -1,0 +1,6 @@
+**/CFGS/
+*.conf
+*.full
+**/backup/
+**/group_vars/all
+inventory_old

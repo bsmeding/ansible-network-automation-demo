@@ -1,0 +1,11 @@
+loopback_ip: 10.199.10.2
+management_ip: 172.10.30.2
+
+uplink_interface: Ethernet1/0
+uplink_vlan: 12
+uplink_ip: 10.0.11.10
+uplink_sn: 255.255.255.248
+
+def_gateway: 10.0.10.254
+
+WAN1_ip: 2.2.2.1

@@ -1,0 +1,14 @@
+---
+- name: Check WAN Connectivity from hq-distsw01 to hq-r1 WAN
+  hosts: hq-distsw01
+  tasks:
+    - ios_ping:
+        provider: "{{ creds_core_ssh }}"
+        dest: 1.1.1.1
+
+- name: Check WAN Connectivity from hq-distsw01 to b1-r1 WAN
+  hosts: hq-distsw01
+  tasks:
+    - ios_ping:
+        provider: "{{ creds_core_ssh }}"
+        dest: 1.1.1.18 

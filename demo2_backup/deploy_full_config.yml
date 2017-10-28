@@ -1,5 +1,5 @@
 ---
-- name: Deployt Full config with NAPALM
+- name: Check connect
   hosts: hq
   tasks:
     - name: Test connectivity (Ansible_core)
@@ -20,7 +20,7 @@
       napalm_install_config:
         provider: "{{ creds_napalm }}"
         config_file: "CFGS/{{ inventory_hostname}}.full.confg"
-        commit_changes: False
+        commit_changes: True
         replace_config: False
         diff_file: "DIFF/{{inventory_hostname}}.txt"
       tags: install

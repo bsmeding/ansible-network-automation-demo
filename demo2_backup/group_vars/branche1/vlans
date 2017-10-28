@@ -1,0 +1,13 @@
+vlans:
+  - vlan_id: 10
+    vlan_name: Data
+  - vlan_id: 20
+    vlan_name: Voice  
+  - vlan_id: 30
+    vlan_name: Management
+  - vlan_id: 40
+    vlan_name: Print-Scan
+  - vlan_id: 50
+    vlan_name: Wireless
+  - vlan_id: 999
+    vlan_name: NietInGebruik

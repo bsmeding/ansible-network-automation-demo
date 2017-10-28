@@ -1,0 +1,22 @@
+---
+- name: Get all IOS models on HQ
+  hosts: hq
+  tasks:
+    - ios_command:
+        provider: "{{ creds_core_ssh }}"
+        commands: show ip int brief
+      register: output
+
+    - debug:
+        msg: "{{ output['stdout_lines'] }}"
+
+# kan ook zonder ['
+#    - debug:
+#        msg: "{{ output.stdout_lines }}"
+
+    # laatste lege dict weghalen
+#    - debug:
+#        msg: "{{ output.stdout_lines[0] }}"
+
+
+

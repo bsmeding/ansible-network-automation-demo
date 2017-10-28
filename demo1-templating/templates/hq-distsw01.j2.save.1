@@ -76,6 +76,7 @@ interface Ethernet0/0
  switchport mode trunk
  duplex auto
  spanning-tree portfast trunk
+ no shutdown
 !
 interface Ethernet0/1
  description Naar HQ-R2
@@ -85,6 +86,7 @@ interface Ethernet0/1
  switchport mode trunk
  duplex auto
  spanning-tree portfast trunk
+ no shutdown
 !
 interface Ethernet0/2
  switchport access vlan 10
@@ -101,6 +103,7 @@ interface Ethernet1/0
  no switchport
  ip address 172.16.0.254 255.255.255.0
  spanning-tree portfast
+ no shutdown
 !
 interface Ethernet1/1
  switchport access vlan 10
@@ -271,34 +274,16 @@ interface Ethernet7/3
 !         
 interface Vlan1
  ip address 10.0.10.10 255.255.255.0
+ no shutdown
 !
 interface Vlan11
  ip address 10.0.11.1 255.255.255.248
+ no shutdown
 !
 interface Vlan12
  ip address 10.0.11.9 255.255.255.248
  shutdown
 !
-router ospf 100
- router-id 10.199.10.3
- redistribute static subnets
- redistribute bgp 1 subnets
- passive-interface default
- no passive-interface Vlan11
- no passive-interface Vlan12
- network 0.0.0.0 255.255.255.255 area 0
-!
-router bgp 1
- bgp log-neighbor-changes
- network 10.0.10.0
- aggregate-address 10.0.10.0 255.255.255.0
- timers bgp 1 5
- neighbor RR-CLIENTS peer-group
- neighbor RR-CLIENTS remote-as 1
- neighbor RR-CLIENTS update-source Loopback0
- neighbor RR-CLIENTS route-reflector-client
- neighbor 10.199.10.1 peer-group RR-CLIENTS
- neighbor 10.199.10.2 peer-group RR-CLIENTS
 !
 ip default-gateway 10.0.10.254
 !
@@ -308,14 +293,11 @@ ip route 0.0.0.0 0.0.0.0 10.0.10.254
 !
 logging trap notifications
 logging source-interface Loopback0
+
+
 logging host 172.16.0.10
 !
 !
-snmp-server community yaworks-RO RO
-snmp-server trap-source Loopback0
-snmp-server contact YaWorks-admin
-snmp-server host 172.16.0.10 yaworks-snmp 
-snmp ifmib ifindex persist
 !
 !
 !
@@ -334,3 +316,5 @@ line vty 0 4
 ntp source Loopback0
 ntp update-calendar
 ntp server 172.16.0.10
+!
+end

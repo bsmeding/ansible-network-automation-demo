@@ -1,0 +1,10 @@
+management_interface: Loopback0  
+
+uplink_interface: Ethernet1/0
+uplink_vlan: 11
+uplink_ip: 10.0.11.2
+uplink_sn: 255.255.255.248
+
+def_gateway: 10.0.11.1
+
+WAN1_ip: 1.1.1.1

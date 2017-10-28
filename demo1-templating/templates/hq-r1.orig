@@ -1,0 +1,224 @@
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname hq-r1
+!
+boot-start-marker
+boot-end-marker
+!
+aqm-register-fnf
+!
+enable secret 5 $1$Cil5$8sU7ES4UvrHbassCpE.Nw0
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local 
+!         
+!
+!
+!
+!
+aaa session-id common
+clock timezone CET 1 0
+clock summer-time CET recurring last Sun Mar 2:00 last Sun Oct 3:00
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!         
+no ip domain lookup
+ip domain name yaworks.demo
+ip cef
+login on-failure log
+login on-success log
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username yaworks-admin privilege 15 secret 5 $1$Vyhs$9A5E4i.mvgx8DBc5VUiCM1
+!
+redundancy
+!
+!
+ip ssh maxstartups 4
+ip ssh time-out 60
+ip ssh authentication-retries 2
+ip ssh source-interface Loopback0
+ip ssh version 2
+!
+class-map match-all CLASS-VOICE
+ match access-group name QOS-HQ-VOICE
+class-map match-all CLASS-APPS
+ match access-group name QOS-HQ-APPS
+!
+policy-map PMAP-QOS-QUEUE
+ class CLASS-VOICE
+  priority percent 15
+ class CLASS-APPS
+  bandwidth percent 75 
+  fair-queue
+ class class-default
+  fair-queue
+policy-map PMAP-SHAPING
+ class class-default
+  shape average percent 96
+   service-policy PMAP-QOS-QUEUE
+!
+!         
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.199.10.1 255.255.255.255
+!
+interface Ethernet0/0
+ bandwidth qos-reference 10000
+ ip address 1.1.1.1 255.255.255.0
+ service-policy output PMAP-SHAPING
+!
+interface Ethernet0/1
+ no ip address
+!         
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ description Naar hq-distsw01
+ no ip address
+!
+interface Ethernet1/0.11
+ encapsulation dot1Q 11
+ ip address 10.0.11.2 255.255.255.248
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown 
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router ospf 100
+ router-id 10.199.10.1
+ network 0.0.0.0 255.255.255.255 area 0
+!
+router bgp 1
+ bgp router-id 10.199.10.1
+ bgp log-neighbor-changes
+ network 10.199.10.1 mask 255.255.255.255
+ aggregate-address 10.0.10.0 255.255.255.0
+ neighbor 1.1.1.2 remote-as 1000
+ neighbor 1.1.1.18 remote-as 2
+ neighbor 1.1.1.19 remote-as 3
+ neighbor 10.199.10.3 remote-as 1
+ neighbor 10.199.10.3 update-source Loopback0
+!
+ip forward-protocol nd
+!
+!         
+no ip http server
+no ip http secure-server
+!
+ip access-list extended QOS-HQ-APPS
+ permit tcp any any eq 3200
+ permit tcp any any eq 3300
+ permit tcp any any eq 3600
+ permit tcp any any eq 389
+ permit tcp any any eq 390
+ permit tcp any any eq 3268
+ permit tcp any any eq 3269
+ permit tcp any any eq 993
+ permit tcp any any eq pop3
+ip access-list extended QOS-HQ-VOICE
+ permit udp any any range 16384 32767
+!
+!
+ip prefix-list PL-ALL-LOOPBACKS seq 5 permit 0.0.0.0/0 ge 32
+logging trap notifications
+logging source-interface Loopback0
+logging host 172.16.0.11
+!
+route-map RM-BGP-FROM-SUMMARY permit 10
+ match tag 210
+ set community 131072 196608
+!
+route-map RM-BGP-FALLOVER permit 10
+ match ip address prefix-list PL-ALL-LOOPBACKS
+!
+route-map RM-BGP-FROM-STATIC permit 10
+ match tag 110
+ set community 131073 196609
+!
+route-map RM-BGP-PREPEND-OUT permit 10
+ set as-path prepend 1 1 1 1 1 1 1
+!
+snmp-server community yaworks-RO RO
+snmp-server trap-source Loopback0
+snmp-server contact YaWorks-admin
+snmp-server host 172.16.0.10 yaworks-snmp 
+!
+!
+!
+!
+control-plane
+!         
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ exec-timeout 30 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ exec-timeout 30 0
+ transport input telnet ssh
+!
+ntp source Loopback0
+ntp update-calendar
+ntp server 172.16.0.10
+!
+end

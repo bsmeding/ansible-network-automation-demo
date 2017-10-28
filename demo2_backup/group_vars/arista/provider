@@ -1,6 +1,5 @@
-
 ---
-platform: nxos
+platform: eos
 
 creds_core_ssh:
   host: "{{ ansible_host }}"
@@ -9,21 +8,19 @@ creds_core_ssh:
   transport: cli
   timeout: 60
 
-creds_core_nxapi:
+creds_core_eapi:
   host: "{{ ansible_host }}"
   username: "{{ device_ssh_user }}"
   password: "{{ device_ssh_password }}"
-  transport: nxapi
-  use_ssl: yes
+  transport: eapi
+  use_ssl: True
   validate_certs: no
-  port: 8443
   timeout: 60
 
 creds_napalm:
   hostname: "{{ ansible_host }}"
   username: "{{ device_ssh_user }}"
   password: "{{ device_ssh_password }}"
-  dev_os: "nxos"
-  optional_args:
-    port: 8443
+  dev_os: "eos"
+  optional_args: {}
 

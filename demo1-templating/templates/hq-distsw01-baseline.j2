@@ -1,0 +1,132 @@
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname {{ inventory_hostname }}
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no enable secret
+!
+username cisco privilege 15 password cisco
+username yaworks privilege 15 secret admin
+username {{ device_ssh_user }}  privilege 15 secret {{ device_ssh_password }}
+aaa new-model
+!
+!         
+aaa authentication login default local
+aaa authorization exec default local 
+!
+!
+!
+!
+!
+aaa session-id common
+clock timezone CET 1 0
+clock summer-time CET recurring last Sun Mar 2:00 last Sun Oct 3:00
+!
+ip cef
+!
+!
+no ip domain-lookup
+ip domain-name {{ domain_name }}
+login on-failure log
+login on-success log
+no ipv6 cef
+ipv6 multicast rpf use-bgp
+!
+!
+crypto key generate rsa modules 2048
+!         
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+!
+!
+vlan internal allocation policy ascending
+!
+! 
+!
+!
+!
+!
+!         
+!
+!
+!
+interface Loopback0
+ ip address {{ ansible_host }} 255.255.255.255
+!
+interface Ethernet0/0
+ description Naar HQ-R1
+ switchport access vlan 11
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 11
+ switchport mode trunk
+ duplex auto
+ spanning-tree portfast trunk
+ no shutdown
+!
+interface Ethernet0/1
+ description Naar HQ-R2
+ switchport access vlan 12
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 12
+ switchport mode trunk
+ duplex auto
+ spanning-tree portfast trunk
+ no shutdown
+!
+interface Ethernet1/0
+ description Management
+ no switchport
+ ip address 172.16.0.254 255.255.255.0
+ spanning-tree portfast
+ no shutdown
+!
+interface Vlan1
+ ip address 10.0.10.10 255.255.255.0
+ no shutdown
+!
+interface Vlan11
+ ip address 10.0.11.1 255.255.255.248
+ no shutdown
+!
+interface Vlan12
+ ip address 10.0.11.9 255.255.255.248
+ no shutdown
+!
+!
+ip default-gateway 10.0.10.254
+!
+no ip http server
+!
+ip route 0.0.0.0 0.0.0.0 10.0.10.254
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ exec-timeout 30 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ exec-timeout 30 0
+ password admin
+ transport input telnet ssh
+!
+!
+end

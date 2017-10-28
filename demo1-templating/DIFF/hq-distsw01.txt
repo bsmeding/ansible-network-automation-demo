@@ -1,0 +1,15 @@
++enable secret admin
++username yaworks privilege 15 secret admin
++username yaworks-admin privilege 15 secret admin
++interface Ethernet0/0
+- no shutdown
++interface Ethernet0/1
+- no shutdown
++interface Ethernet1/0
+- no shutdown
++interface Vlan1
+- no shutdown
++interface Vlan11
+- no shutdown
++interface Vlan12
+- no shutdown

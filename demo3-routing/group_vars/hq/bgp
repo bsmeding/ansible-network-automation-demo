@@ -1,0 +1,17 @@
+---
+site_ASN: 1
+site_summary_subnet: 10.0.10.0/24
+
+ebgp_peers:
+  hq-r1:
+    10.199.10.3:
+      - remote-as 1
+    1.1.1.18:
+      - remote-as 2
+  hq-distsw01:
+    10.199.10.1:
+      - remote-as 1
+      - update-source Loopback0
+    10.199.10.2:
+      - remote-as 1
+      - update-source Loopback0

@@ -1,0 +1,164 @@
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname {{ inventory_hostname }}
+!
+boot-start-marker
+boot-end-marker
+!
+aqm-register-fnf
+!
+enable password cisco
+!
+username yaworks privilege 15 secret admin
+username {{ device_ssh_user }}  privilege 15 secret {{ device_ssh_password }}
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local 
+!         
+!
+!
+!
+!
+aaa session-id common
+clock timezone CET 1 0
+clock summer-time CET recurring last Sun Mar 2:00 last Sun Oct 3:00
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!         
+no ip domain lookup
+ip domain name yaworks.demo
+ip cef
+login on-failure log
+login on-success log
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username yaworks-admin privilege 15 secret 5 $1$Vyhs$9A5E4i.mvgx8DBc5VUiCM1
+!
+redundancy
+!
+!
+ip ssh maxstartups 4
+ip ssh time-out 60
+ip ssh authentication-retries {{ ssh_max_auth }}
+ip ssh source-interface {{ management_interface }}
+ip ssh version {{ ssh_version }}
+!
+!
+!         
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address {{ ansible_host }} 255.255.255.255
+!
+interface Ethernet0/0
+ ip address {{ WAN1_ip }} 255.255.255.0
+!
+interface Ethernet0/1
+ no ip address
+!         
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+!
+interface Ethernet1/0.{{ uplink_vlan}}
+ encapsulation dot1Q {{ uplink_vlan}}
+ ip address {{ uplink_ip }} {{ uplink_sn }}
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown 
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router ospf 100
+ router-id {{ ansible_host }}
+ network 0.0.0.0 255.255.255.255 area 0
+!
+ip default-gateway 10.0.10.254
+ip forward-protocol nd
+!
+!         
+no ip http server
+no ip http secure-server
+!
+!
+snmp-server community yaworks-RO RO
+snmp-server trap-source Loopback0
+snmp-server contact YaWorks-admin
+snmp-server host 172.16.0.10 yaworks-snmp 
+!
+!
+!
+!
+control-plane
+!         
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ exec-timeout 30 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ exec-timeout 30 0
+ transport input telnet ssh
+!
+ntp source Loopback0
+ntp update-calendar
+ntp server 172.16.0.10
+!
+end

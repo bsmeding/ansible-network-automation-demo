@@ -282,7 +282,7 @@ interface Vlan11
 !
 interface Vlan12
  ip address 10.0.11.9 255.255.255.248
- no shutdown
+ shutdown
 !
 router ospf 100
  router-id 10.199.10.3
@@ -292,6 +292,18 @@ router ospf 100
  no passive-interface Vlan11
  no passive-interface Vlan12
  network 0.0.0.0 255.255.255.255 area 0
+!
+router bgp 1
+ bgp log-neighbor-changes
+ network 10.0.10.0
+ aggregate-address 10.0.10.0 255.255.255.0
+ timers bgp 1 5
+ neighbor RR-CLIENTS peer-group
+ neighbor RR-CLIENTS remote-as 1
+ neighbor RR-CLIENTS update-source Loopback0
+ neighbor RR-CLIENTS route-reflector-client
+ neighbor 10.199.10.1 peer-group RR-CLIENTS
+ neighbor 10.199.10.2 peer-group RR-CLIENTS
 !
 ip default-gateway 10.0.10.254
 !
@@ -304,6 +316,11 @@ logging source-interface Loopback0
 logging host 172.16.0.10
 !
 !
+snmp-server community yaworks-RO RO
+snmp-server trap-source Loopback0
+snmp-server contact YaWorks-admin
+snmp-server host 172.16.0.10 yaworks-snmp 
+snmp ifmib ifindex persist
 !
 !
 !
@@ -322,5 +339,3 @@ line vty 0 4
 ntp source Loopback0
 ntp update-calendar
 ntp server 172.16.0.10
-!
-end

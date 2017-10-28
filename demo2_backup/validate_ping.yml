@@ -1,0 +1,12 @@
+- name: NAPALM Ping
+  hosts: hq
+  tasks:
+    - name: Ping hq-distsw01 Loopback0
+      napalm_ping:
+        provider: "{{ creds_napalm }}"
+        destination: 10.199.10.3
+
+    - name: Ping Ansible host server
+      napalm_ping:
+        provider: "{{ creds_napalm }}"
+        destination: 172.16.0.5

@@ -1,0 +1,62 @@
+---
+- hosts: localhost
+  vars:
+    ansible_version: 2.4
+    python_packages_to_install:
+       - virtualenv
+       - ansible
+       - netmiko
+       - gitpull
+       - pysnmp
+       - paramiko
+       - jsonrpclib
+       - pygal
+       - pylint
+       - pep8
+       - flake8
+       - pylama
+       - ciscoconfparse
+       - pexpect
+       - ntc-ansible
+       - napalm
+
+  tasks:
+    - name: determine current user
+      command: whoami
+      register: whoami_result
+      changed_when: false
+
+    - debug:
+        var: whoami_result.stdout
+
+#    - name: install requirements
+#      yum: name=$item state=installed
+#      apt: name={{item}} state=latest update_cache=yes
+#      with_items: 
+#        - git
+#        - python-pip
+#        - dirmngr
+#        - python-2.7
+
+    - name: install virtualenv
+      pip: name=virtualenv
+
+    - name: create Virtual Environment for Ansible {{ ansible_version }}
+      pip: 
+        virtualenv: ~/ansible{{ ansible_version }}
+        virtualenv_python: python2.7
+
+    - name: virtualenv activate
+      shell: source ~/ansible{{ ansible_version }}/bin/activate
+
+    - name: install ansible {{ ansible_version }}
+      pip: name=ansible=={{ ansible_version }} state=installed
+
+
+    - name: set ansible_python_interpreter
+      set_fact: ansible_python_interpreter="~/ansible{{ ansible_version }}/bin/python"
+    
+    - name: "Install Python packages: {{ python_packages_to_install }}"
+      pip: name="{{ python_packages_to_install | join(' ') }}"
+      with_items: python_packages_to_install
+

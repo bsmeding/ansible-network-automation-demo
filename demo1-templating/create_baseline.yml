@@ -1,0 +1,10 @@
+---
+- name: Aanmaken device config files van template
+  hosts: hq
+  tasks:
+    - name: Generate Full template
+      template:
+        src: templates/{{ inventory_hostname }}-baseline.j2
+        dest: "CFGS/{{ inventory_hostname}}.baseline.confg"
+      tags: template
+

@@ -1,0 +1,25 @@
+- name: Configure YaWorks site
+  hosts: all
+  tasks:
+    - name: Remove confif file directory
+      file:
+        path: "CFGS/{{ inventory_hostname }}/"
+        state: absent
+
+    - name: Recreate fresh config directory for {{ inventory_hostname }}
+      file:
+        path: "CFGS/{{ inventory_hostname }}"
+        state: directory
+
+# Create base config files
+
+
+
+
+
+
+# Asseble parts together
+    - assemble:
+        src: "CFGS/{{ inventory_hostname }}/"
+        dest: "CFGS/{{ inventory_hostname }}.confg"
+

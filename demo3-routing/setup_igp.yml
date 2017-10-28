@@ -1,0 +1,26 @@
+---
+- name: Create template Interior gateway protocol | OSPF
+  hosts: hq
+  tasks:
+    - name: Generate OSPF config
+      template:
+        src: "templates/igp-{{ platform }}.j2"
+        dest: "CFGS/{{ inventory_hostname}}.igp.confg"
+      tags: template
+
+- name: Install config external routers
+  hosts: hq-r1:hq-r2
+  tasks:
+    - name: Test connectivity         
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+      tags: connectivity
+
+    - name: Install OSPF config edge routers HQ
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "CFGS/{{ inventory_hostname}}.igp.confg"
+        commit_changes: False
+        replace_config: False
+        diff_file: "DIFF/{{inventory_hostname}}.igp.diff"
+      tags: install
