@@ -1,0 +1,34 @@
+---
+- name: Set b1-distgsw01 back to baseline
+  hosts: b1-distsw01
+  tasks:
+    - name: Test connectivity         
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+      tags: [ connectivity ]
+
+    - name: Replace config
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.baseline.confg"
+        commit_changes: True
+        replace_config: True
+      tags: [ replaceconfig, branche1 ]
+
+
+- name: Set b1-r1 back to baseline
+  hosts: b1-r1
+  tasks:
+    - name: Test connectivity
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+      tags: [ connectivity ]
+
+    - name: Replace config
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.baseline.confg"
+        commit_changes: True
+        replace_config: True
+      tags: [ replaceconfig, branche1 ]
+      

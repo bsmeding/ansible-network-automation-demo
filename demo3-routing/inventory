@@ -16,11 +16,6 @@ accsw-branche1
 routers-hq
 routers-branche1
 
-[routers-extern]
-hq-r1-ext ansible_host=10.0.10.1
-hq-r2-ext ansible_host=10.0.10.2
-b1-r1-ext ansible_host=1.1.1.18
-
 [switches:children]
 switches-hq
 distsw-branche1
@@ -34,7 +29,9 @@ b1-distsw01
 [cisco]
 hq-distsw01
 hq-r1
+hq-r1-ext
 hq-r2
+hq-r2-ext
 b1-r1
 b1-distsw01
 b1-accsw01
@@ -55,9 +52,17 @@ hq-distsw01 ansible_host=10.199.10.3
 
 
 ###### DEVICES BRANCHE -1   10.199.<BRANCHE-ID>.1-10
+[branche1:children]
+routers-branche1
+switches-branche1
+
 [routers-branche1]
 b1-r1 ansible_host=10.199.18.1
 b1-r2 ansible_host=10.199.18.2
+
+[switches-branche1:children]
+distsw-branche1
+accsw-branche1
 
 [distsw-branche1]		#   TOR Switches 10.199.<BRANCHE-ID>.1-10 (L3)      10.199.<BRANCHE-ID>.11-20 (L2)
 b1-distsw01 ansible_host=10.199.18.3

@@ -1,0 +1,12 @@
+mgmt_intf:
+  hq-distsw01:
+    Loopback0: 10.199.10.3/32
+  hq-r1:
+    Loopback0: 10.199.10.1/32
+  hq-r2:
+    Loopback0: 10.199.10.2/32
+
+norouting_ip:
+  hq-distsw01: 10.199.10.3
+  hq-r1: 10.0.11.2
+  hq-r2: 10.0.11.10

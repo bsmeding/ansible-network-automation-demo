@@ -1,0 +1,6 @@
+- name: Default installation
+  hosts: localhost
+  become: true
+  roles:
+    - nishiki.bind
+

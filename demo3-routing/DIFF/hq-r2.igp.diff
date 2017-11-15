@@ -1,0 +1,2 @@
++router ospf 100
+- no passive-interface Ethernet0/1

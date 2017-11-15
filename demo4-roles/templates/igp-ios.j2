@@ -1,0 +1,13 @@
+router ospf {{ ospf.processid }}
+ router-id {{ loopback_ip }}
+{% for interface in ospf_intf_list[inventory_hostname] %}
+ no passive-interface {{ interface }}
+{% endfor %}
+{% if inventory_hostname in ospf %}
+{% for device_option in ospf[inventory_hostname] %}
+ {{ device_option }}
+{% endfor %}
+{% endif %}
+{% for option in ospf.global %}
+ {{ option }}
+{% endfor %}

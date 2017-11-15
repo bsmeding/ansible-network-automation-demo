@@ -1,0 +1,4 @@
+---
+{% for nb_entry in napalm_lldp_neighbors %}
+{{ nb_entry[0]}}: {{ nb_entry['hostname'] }}
+{% endfor %}

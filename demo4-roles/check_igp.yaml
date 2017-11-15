@@ -1,0 +1,17 @@
+---
+- name: Check Interior gateway protocol on YaWorks HQ
+  hosts: hq
+  vars:
+    failed_ospf_hosts: []
+  tasks:
+    - name: Generate correct OSPF config
+      template:
+        src: "templates/igp-{{ platform }}.j2"
+        dest: "CFGS/{{ inventory_hostname}}.igp.confg"
+      tags: template
+
+    - name: Test connectivity
+      ios_facts:
+        provider: "{{ creds_core_ssh }}"
+      tags: connectivity
+

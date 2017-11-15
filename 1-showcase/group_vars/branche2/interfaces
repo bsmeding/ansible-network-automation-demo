@@ -1,0 +1,38 @@
+mgmt_intf:
+  b2-distsw01:
+    Loopback0: 10.199.19.3/32
+  b2-r1:
+    Loopback0: 10.199.19.1/32
+  b2-r2:
+    Loopback0: 10.199.19.2/32
+
+norouting_ip:
+  b2-r1: 1.1.1.19
+
+
+access_ports:
+  10:
+    Ethernet1:
+      - - 0
+        - 4
+  30:
+    Ethernet2:
+      - - 0
+        - 4
+  50:
+    Ethernet3:
+      - - 0
+        - 4
+  999:
+    Ethernet4:
+      - - 0
+        - 4
+    Ethernet5:
+      - - 0
+        - 4
+    Ethernet6:
+      - - 0
+        - 4
+    Ethernet7:
+      - - 0
+        - 4

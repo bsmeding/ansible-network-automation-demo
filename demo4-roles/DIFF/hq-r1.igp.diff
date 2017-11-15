@@ -1,0 +1,3 @@
++router ospf 100
+- no passive-interface Eth0/1
++ default auto-cost reference-bandwidth 100000

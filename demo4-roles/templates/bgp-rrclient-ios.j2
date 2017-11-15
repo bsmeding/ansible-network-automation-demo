@@ -1,0 +1,18 @@
+{% if inventory_hostname in bgp_originate_network %}
+{%- for connected_interface in bgp_originate_network[inventory_hostname] %} 
+ network {{ mgmt_intf[inventory_hostname][connected_interface]| ipaddr('address') }} mask {{ mgmt_intf[inventory_hostname][connected_interface]| ipaddr('netmask') }}
+{%- endfor %}
+{% endif %}
+{% if inventory_hostname in ebgp_peers -%} 
+{% for neighbor_ip in ebgp_peers[inventory_hostname] %} 
+{% for option in ebgp_peers[inventory_hostname][neighbor_ip] %} 
+ neighbor {{ neighbor_ip }} {{ option }} 
+{% endfor %}
+{%- endfor %}
+{% endif %} 
+{% if inventory_hostname in ibgp_topology.rr_clients %}
+{% for rr_server in ibgp_topology.route_reflector %} 
+ neighbor {{ mgmt_intf[rr_server][management_interface] | ipaddr('address') }} remote-as {{ site_ASN }}
+ neighbor {{ mgmt_intf[rr_server][management_interface] | ipaddr('address') }} update-source {{ management_interface }}
+{%- endfor %}
+{% endif %}

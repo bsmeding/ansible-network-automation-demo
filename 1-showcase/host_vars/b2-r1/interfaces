@@ -1,0 +1,16 @@
+loopback_ip: 10.199.19.1
+management_ip: 172.19.30.1
+
+def_gateway: 1.1.1.1
+
+uplinks:
+  - desc: Naar WAN1
+    my_port: Ethernet1
+    my_ip: 1.1.1.19/24
+    remote_port: WAN 1 Provider
+    remote_ip: PE
+  - desc: Naar b2-distsw01
+    my_port: Ethernet2
+    my_ip: 172.19.1.1/30
+    remote_port: Ethernet0/0
+    remote_ip: 172.19.1.2/30

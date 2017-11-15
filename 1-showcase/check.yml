@@ -1,0 +1,10 @@
+---
+- name: Check EAPI connectivity Branche 2 Router 1
+  hosts: b2-r1
+  tasks:
+    - name: Test connectivity
+      eos_facts:
+        gather_subset: all
+        provider: "{{ creds_core_eapi }}"
+      tags: connectivity
+

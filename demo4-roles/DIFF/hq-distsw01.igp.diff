@@ -1,0 +1,9 @@
++router ospf 100
++ router-id 10.199.10.3
+- no passive-interface Eth0/0
+- no passive-interface Eth0/1
++ redistribute static subnets
++ redistribute bgp 1 subnets
++ default auto-cost reference-bandwidth 100000
++ network 0.0.0.0 255.255.255.255 area 0
++ passive-interface default

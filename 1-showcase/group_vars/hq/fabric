@@ -1,0 +1,9 @@
+---
+fabric_intf_list:
+  hq-distsw01:
+    - Ethernet0/0: hq-r1
+    - Ethernet0/1: hq-r2
+  hq-r1:
+    - Ethernet0/1: hq-distsw01
+  hq-r2:
+    - Ethernet0/1: hq-distsw01

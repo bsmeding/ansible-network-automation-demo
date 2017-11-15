@@ -1,0 +1,2 @@
++router bgp 2
++ bgp router-id 10.199.18.1

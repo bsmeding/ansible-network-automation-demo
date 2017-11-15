@@ -1,0 +1,7 @@
+ neighbor RR-CLIENTS peer-group
+ neighbor RR-CLIENTS remote-as {{ site_ASN }}
+ neighbor RR-CLIENTS update-source {{ management_interface }}
+ neighbor RR-CLIENTS route-reflector-client
+{%  for clients in ibgp_topology.rr_clients -%} 
+ neighbor {{ mgmt_intf[clients][management_interface] | ipaddr('address') }} peer-group RR-CLIENTS
+{%-  endfor %}

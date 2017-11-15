@@ -1,0 +1,90 @@
+[local]
+localhost ansible_connection=local
+
+
+##### GROUP PER LOCATION AND TYPE
+[hq:children]
+routers-hq
+switches-hq
+
+[branche1:children]
+routers-branche1
+distsw-branche1
+accsw-branche1
+
+[routers:children]
+routers-hq
+routers-branche1
+
+[switches:children]
+switches-hq
+distsw-branche1
+accsw-branche1
+
+[core-switches]
+hq-distsw01
+b1-distsw01
+
+#### GROUP PER PLATFORM  {{ Nodig voor provider settings
+[cisco]
+hq-distsw01
+hq-r1
+hq-r1-ext
+hq-r2
+hq-r2-ext
+b1-r1
+b1-distsw01
+b1-accsw01
+b1-accsw02
+
+[cisco-all:children]
+hq
+branche1
+
+
+##### HQ DEVICES
+[routers-hq]
+hq-r1 ansible_host=10.199.10.1
+hq-r2 ansible_host=10.199.10.2
+
+[switches-hq]
+hq-distsw01 ansible_host=10.199.10.3
+
+
+###### DEVICES BRANCHE -1   10.199.<BRANCHE-ID>.1-10
+[branche1:children]
+routers-branche1
+switches-branche1
+
+[routers-branche1]
+b1-r1 ansible_host=10.199.18.1
+b1-r2 ansible_host=10.199.18.2
+
+[switches-branche1:children]
+distsw-branche1
+accsw-branche1
+
+[distsw-branche1]		#   TOR Switches 10.199.<BRANCHE-ID>.1-10 (L3)      10.199.<BRANCHE-ID>.11-20 (L2)
+b1-distsw01 ansible_host=10.199.18.3
+#b1-distsw02 ansible_host=10.199.18.4
+
+[accsw-branche1]		#   SPINE Switches  172.<BRANCHE-ID>.<MNMT-SUBN>.21-50
+b1-accsw01 ansible_host=10.199.18.21
+b1-accsw02 ansible_host=10.199.18.22
+b1-accsw03 ansible_host=10.199.18.23
+b1-accsw04 ansible_host=10.199.18.24
+b1-accsw05 ansible_host=10.199.18.25
+b1-accsw06 ansible_host=10.199.18.26
+#b1-accsw07 ansible_host=10.199.18.27
+#b1-accsw08 ansible_host=10.199.18.28
+
+
+
+###### Management Servers
+[man-servers]
+tools ansible_host=172.16.0.11
+
+
+[servers-ansible:children]
+local
+

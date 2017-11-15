@@ -1,0 +1,21 @@
+bind_role: master
+bind_listen_ipv6: true
+bind_listen_ipv4: true
+
+bind_zones:
+ yaworks.demo:
+   ns_primary: ns1.yaworks.demo
+   mail: bart@yaworks.demo
+   serial: 2017092202
+   dnssec: yes
+   entries:
+     - { name: '@', type: ns, value: localhost. }
+     - { name: ns1, type: a, value: 172.16.0.10 }
+     - { name: ansible, type: a, value: 172.16.0.10 }
+     - { name: ansible-tools, type: a, value: 172.16.0.11 }
+     - { name: ntp1, type: a, value: 172.16.0.10 }
+     - { name: ntp2, type: a, value: 172.16.0.11 }
+     - { name: dns1, type: a, value: 172.16.0.10 }
+     - { name: dns2, type: a, value: 172.16.0.11 }
+     - { name: hq-distsw01, type: a, value: 10.199.10.3 }
+     - { name: hq-r1, type: a, value: 10.199.10.1 }

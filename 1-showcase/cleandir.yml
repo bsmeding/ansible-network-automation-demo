@@ -1,0 +1,12 @@
+- name: Setup Config and Diff directory {{configs_DIR}}
+  hosts: localhost
+  tasks:
+    - name: Clean artifact path
+      file:
+        state: absent
+        path: "{{configs_DIR}}/"
+    - name: Clean artifact path
+      file:
+        state: present
+        path: "{{configs_DIR}}/"
+  tags: [ cleandir ]

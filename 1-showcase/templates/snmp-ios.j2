@@ -1,0 +1,32 @@
+snmp-server community {{ snmp_ro_community }} RO yw_snmp_ro_toegang
+snmp-server community {{ snmp_rw_community }} RW yw_snmp_rw_toegang
+snmp-server trap-source {{ management_interface }}
+snmp-server location {{ snmp_location }}
+snmp-server contact {{ snmp_contact }}
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server enable traps ospf state-change
+snmp-server enable traps ospf errors
+snmp-server enable traps ospf retransmit
+snmp-server enable traps ospf lsa
+snmp-server enable traps ospf cisco-specific state-change nssa-trans-change
+snmp-server enable traps ospf cisco-specific state-change shamlink interface-old
+snmp-server enable traps ospf cisco-specific state-change shamlink neighbor
+snmp-server enable traps ospf cisco-specific errors
+snmp-server enable traps ospf cisco-specific retransmit
+snmp-server enable traps ospf cisco-specific lsa
+snmp-server enable traps dot1x auth-fail-vlan guest-vlan no-auth-fail-vlan no-guest-vlan
+snmp-server enable traps vtp
+snmp-server enable traps vlancreate
+snmp-server enable traps vlandelete
+snmp-server enable traps bfd
+snmp-server enable traps bgp
+snmp-server enable traps rsvp
+snmp-server enable traps syslog
+{% for server in snmp_servers %}
+snmp-server host {{ server.ip }} {{ server.community }}
+{% endfor %}
+snmp ifmib ifindex persist
+
+
+
+

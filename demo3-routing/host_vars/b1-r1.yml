@@ -1,8 +1,13 @@
 loopback_ip: 10.199.18.1
 
-def_gateway: 172.18.2.2
+def_gateway: 1.1.1.1
 
 uplinks:
+  - desc: Naar WAN1
+    my_port: Ethernet0/
+    my_ip: 1.1.1.18/24
+    remote_port: WAN 1 Provider
+    remote_ip: PE
   - desc: Naar b1-distsw01
     my_port: Ethernet0/1
     my_ip: 172.18.1.1/30

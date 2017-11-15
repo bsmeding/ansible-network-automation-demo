@@ -1,0 +1,30 @@
+router bgp {{ site_ASN }}
+   router-id {{ loopback_ip }}
+{% if inventory_hostname in ebgp_peers %}
+{% for neighbor_ip in ebgp_peers[inventory_hostname] %}
+{% for option in ebgp_peers[inventory_hostname][neighbor_ip] %}
+   neighbor {{ neighbor_ip }} {{ option }}
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% if inventory_hostname in ibgp_topology.route_reflector %}
+   neighbor RR-CLIENTS peer-group
+   neighbor RR-CLIENTS remote-as {{ site_ASN }}
+   neighbor RR-CLIENTS update-source {{ management_interface }}
+   neighbor RR-CLIENTS route-reflector-client
+{% for clients in ibgp_topology.rr_clients %}
+   neighbor {{ mgmt_intf[clients][management_interface] | ipaddr('address') }} peer-group RR-CLIENTS
+{% endfor %}
+{% endif %}
+{% if inventory_hostname in ibgp_topology.rr_clients %}
+{% for rrclients in ibgp_topology.route_reflector %}
+   neighbor {{ mgmt_intf[rrclients][management_interface] | ipaddr('address') }} remote-as {{ site_ASN }}
+   neighbor {{ mgmt_intf[rrclients][management_interface] | ipaddr('address') }} update-source {{ management_interface }}
+   neighbor {{ mgmt_intf[rrclients][management_interface] | ipaddr('address') }} maximum-routes 12000
+{% endfor %}
+{% endif %}
+{% if inventory_hostname in ebgp_peers %}
+   network {{ mgmt_intf[inventory_hostname][management_interface] | ipaddr('address') }}/{{ mgmt_intf[inventory_hostname][management_interface] | ipaddr('prefix') }}
+{% endif %}
+   aggregate-address {{ site_summary_subnet | ipaddr('network')}}/{{site_summary_subnet | ipaddr('prefix') }}
+!

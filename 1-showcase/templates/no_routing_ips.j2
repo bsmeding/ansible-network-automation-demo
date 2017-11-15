@@ -1,0 +1,5 @@
+---
+{% for ip in norouting_ip %}
+{{ inventory_hostname }}: {{ ip.ipaddres }}
+{% endfor %}
+

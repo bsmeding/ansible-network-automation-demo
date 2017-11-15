@@ -1,0 +1,26 @@
+---
+- name: Create template for BGP
+  hosts: hq
+  tasks:
+    - name: Generate BGP config
+      template:
+        src: "templates/bgp-{{ platform }}.j2"
+        dest: "CFGS/{{ inventory_hostname}}.bgp.confg"
+      tags: template
+
+- name: Install config HQ
+  hosts: hq
+  tasks:
+    - name: Test connectivity         
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+      tags: connectivity
+
+    - name: Install BGP template to HQ devices
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "CFGS/{{ inventory_hostname}}.bgp.confg"
+        commit_changes: False
+        replace_config: False
+        diff_file: "DIFF/{{inventory_hostname}}.bgp.diff"
+      tags: install

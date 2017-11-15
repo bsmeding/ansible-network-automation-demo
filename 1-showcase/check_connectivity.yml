@@ -1,0 +1,8 @@
+- name: Controleer verbindingen naar alle devices
+  hosts: hq:branche1:branche2
+  gather_facts: no
+  tasks:
+    - name: Test connectivity
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+      tags: [ ospf, connectivity ]
