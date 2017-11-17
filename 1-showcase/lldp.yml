@@ -31,9 +31,6 @@
   gather_facts: no
   connection: local
   tasks:
-#    - name: GET SNMP DISCOVERY INFORMATION
-#      snmp_device_version: host={{ inventory_hostname }} community=networktocode version=2c
-
 
     - name: GET LLDP NEIGHBORS
       ntc_show_command:
