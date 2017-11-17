@@ -23,12 +23,31 @@
       debug:
         msg: "{{ lldp_output.ansible_facts.napalm_lldp_neighbors }}"
 
-#    - name: Check LLDP list - smaller
-#      debug:
-#        msg: "{{ napalm_lldp_neighbors()[1] }}"
+
+## LLDP Via NTC_show
+
+- name: GET LLDP VIA NTC_SHOW
+  hosts: hq
+  gather_facts: no
+  connection: local
+  tasks:
+#    - name: GET SNMP DISCOVERY INFORMATION
+#      snmp_device_version: host={{ inventory_hostname }} community=networktocode version=2c
 
 
-#    - name: Set LLDP as string
-#      debug:
-#        msg: "{{ lookup('template', './templates/convert_lldp_nb.j2') }}"
+    - name: GET LLDP NEIGHBORS
+      ntc_show_command:
+        connection=ssh
+        platform=cisco_ios
+        template_dir='/home/bsmeding/ansible-extras/ntc-ansible/ntc-templates/templates'
+        command='show lldp neighbors'
+        host={{ ansible_host }}
+        username={{ device_ssh_user }}
+        password={{ device_ssh_password }}
+      register: lldp_output_ntc
+      tags: [ lldp, ntc ]
 
+
+    - name: LLDP lijst via NTC tonen
+      debug:
+        msg: "{{ lldp_output_ntc }}"
