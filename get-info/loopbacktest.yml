@@ -1,0 +1,39 @@
+---
+- name: Run ping  commands Branche1 switches
+  connection: local
+  hosts: accsw-branche1
+  gather_facts: false
+  vars:
+    loopbacks:
+      b1-distsw01: 10.199.18.3
+      b1-accsw01: 10.199.18.21
+      b1-accsw02: 10.199.18.22
+      b1-accsw03: 10.199.18.23
+      b1-accsw04: 10.199.18.24
+      b1-accsw05: 10.199.18.25
+      b1-accsw06: 10.199.18.26
+    
+  tasks:
+    - name: run ping to every other host
+      ios_command: 
+        provider: "{{ creds_core_ssh }}"
+        commands: "ping {{ item.value }} source Loopback0 repeat 1"
+      when: item.key != inventory_hostname
+      with_dict: "{{ loopbacks }}"
+      register: ping_result
+      ignore_errors: true
+
+
+# bepalen de output, dit is nodig om strakt een fail op te kunnen maken als ping fout gaat
+    - debug:
+       msg: "{{ ping_result.results[stdout] }}"
+
+
+# in bovenstaande output gezien dat ik lijn 5 (id=4) moet hebben waar success in staat maar ook dat stdout begint met 2 keer een haak openen : [ [ dus er is een 'lege' lijst aanwezig als eerst
+# daarom geven we de output eerst een [0] en dan een [4] voor de lijn
+#    - debug:
+#       msg: "{{ ping_result.stdout_lines[0][4] }}"
+
+    - name: Fail when not all pings are succesful
+      fail: msg="Not all devices can reach each other"
+      failed_when: "'rate is 0 percent' in ping_result.stdout_lines[0][4]"

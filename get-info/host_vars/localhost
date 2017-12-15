@@ -1,0 +1,37 @@
+---
+ansible_connection: local
+ansible_user: ansible
+ansible_ssh_pass: '@ns1ble'
+ansible_sudo_pass: '@ns1ble'
+
+
+bind_zones:
+ yaworks.demo:
+   ns_primary: ns1.yaworks.demo
+   mail: bart@yaworks.demo
+   serial: 2017092202
+   dnssec: yes
+   entries:
+     - { name: '@', type: ns, value: localhost. }
+     - { name: ns1, type: a, value: 172.16.0.10 }
+     - { name: ansible, type: a, value: 172.16.0.10 }
+     - { name: ansible-tools, type: a, value: 172.16.0.11 }
+     - { name: ntp1, type: a, value: 172.16.0.10 }
+     - { name: ntp2, type: a, value: 172.16.0.11 }
+     - { name: dns1, type: a, value: 172.16.0.10 }
+     - { name: dns2, type: a, value: 172.16.0.11 }
+     - { name: hq-distsw01, type: a, value: 10.199.10.3 }
+     - { name: hq-r1, type: a, value: 10.199.10.1 }
+     - { name: hq-r2, type: a, value: 10.199.10.1 }
+     - { name: b1-r1, type: a, value: 10.199.18.1 }
+     - { name: b1-distsw01, type: a, value: 10.199.18.3 }
+     - { name: b1-accsw01, type: a, value: 10.199.18.21 }
+     - { name: b1-accsw02, type: a, value: 10.199.18.22 }
+     - { name: b1-accsw03, type: a, value: 10.199.18.23 }
+     - { name: b1-accsw04, type: a, value: 10.199.18.24 }
+     - { name: b1-accsw05, type: a, value: 10.199.18.25 }
+     - { name: b1-accsw06, type: a, value: 10.199.18.26 }
+     - { name: b2-r1, type: a, value: 10.199.19.1 }
+     - { name: b2-distsw01, type: a, value: 10.199.19.3 }
+     - { name: b2-accsw01, type: a, value: 10.199.19.21 }
+     - { name: b2-accsw02, type: a, value: 10.199.19.22 }

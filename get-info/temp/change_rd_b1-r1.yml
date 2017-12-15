@@ -1,0 +1,10 @@
+---
+- name: Resitribue OSPF to BGP on Branche 1 Router 1
+  hosts: b1-r1
+  tasks:
+  - name: Add redistribute ospf {{ ospf.processid }} to router bgp {{ site_ASN }} on b1-r1
+    ios_config:
+      provider: "{{ creds_core_ssh }}"
+      lines:
+        - redistribute ospf {{ ospf.processid }}
+      parents: router bgp {{ site_ASN }}

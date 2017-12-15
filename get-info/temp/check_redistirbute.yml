@@ -1,0 +1,25 @@
+- name: Check BGP OSPF redistribute B1-R1
+  hosts: b1-r1
+  gather_facts: no
+  tasks:
+    - name: Chech redistribut OSPF in BGP session
+      ios_config:
+        provider: "{{ creds_core_ssh }}"
+        lines:
+          - redistribute ospf {{ ospf.processid }}
+        parents: router bgp {{ site_ASN }}
+      tags: [ ospfredistribute, validate ]
+
+
+- name: Check BGP OSPF redistribute B2-R1
+  hosts: b2-r1
+  gather_facts: no
+  tasks:
+    - name: Chech redistribut OSPF in BGP session
+      eos_config:
+        provider: "{{ creds_core_eapi }}"
+        lines:
+          - redistribute ospf
+        parents: router bgp {{ site_ASN }}
+      tags: [ ospfredistribute, validate ]
+

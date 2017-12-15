@@ -1,0 +1,5 @@
+{% if platform=="ios" %}
+{% include 'templates/baseline-router-ios.j2' %}
+{% elif platform=="eos" %}
+{% include 'templates/baseline-router-eos.j2' %}
+{% endif %}

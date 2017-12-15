@@ -1,0 +1,33 @@
+---
+site_ASN: 3
+site_summary_subnet: 172.19.0.0/16
+
+bgp_originate_network:
+  b2-r1:
+    - Loopback0
+  b2-r2:
+    - Loopback0
+
+ebgp_peers:
+  b2-r1:
+    1.1.1.1:
+      - remote-as 1
+      - maximum-routes 12000
+    1.1.1.18:
+      - remote-as 2
+      - maximum-routes 12000
+
+ibgp_topology:
+  route_reflector: [b2-distsw01]
+  rr_clients: [b2-r1]
+
+bgp_networks:
+  b2-r1:
+    source: Loopback0
+    neighbors:
+      10.199.19.3:
+        - remote-as: 3
+      1.1.1.1:
+        - remote-as: 1
+      1.1.1.18:
+        - remote-as: 2

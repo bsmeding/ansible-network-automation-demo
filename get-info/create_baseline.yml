@@ -1,0 +1,44 @@
+#
+# Create Baseline configuratie
+#
+---
+- name: Aanmaken mappen voor configuratie
+  hosts: branche1
+  tasks:
+  - name: Create configuration directory
+    local_action: file path={{configs_DIR}}/{{ inventory_hostname}} state=directory
+    run_once: false
+    check_mode: no
+    changed_when: no
+    tags: createfs
+
+  - name: Create DIFF directory
+    local_action: file path={{configs_DIR}}/{{ inventory_hostname}}/DIFF state=directory
+    run_once: false
+    check_mode: no
+    changed_when: no
+    tags: createfs
+
+- name: Aanmaken device baseline voor routers
+  hosts: routers-branche1
+  gather_facts: no
+  tasks:
+    - name: Generate Basleine template
+      template:
+        src: templates/baseline-router.j2
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.baseline.confg"
+      tags: template
+
+- name: Aanmaken device baseline voor switches
+  hosts: distsw-branche1:accsw-branche1
+  gather_facts: no
+  tasks:
+    - name: Generate Basleine template
+      template:
+        src: templates/baseline-switch.j2
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.baseline.confg"
+      tags: template
+
+
+
+

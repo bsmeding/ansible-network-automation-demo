@@ -1,0 +1,11 @@
+snmp-server community {{ snmp_ro_community }} RO yw_snmp_ro_toegang
+snmp-server community {{ snmp_rw_community }} RW yw_snmp_rw_toegang
+snmp-server trap-source {{ management_interface }}
+snmp-server location {{ snmp_location }}
+snmp-server contact {{ snmp_contact }}
+{% for server in snmp_servers %}
+snmp-server host {{ server.ip }} version 2c {{ server.community }}
+{% endfor %}
+
+
+

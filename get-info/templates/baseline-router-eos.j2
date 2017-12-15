@@ -1,0 +1,46 @@
+!
+! boot system flash:/vEOS-lab.swi
+!
+transceiver qsfp default-mode 4x10G
+!
+!
+hostname {{ inventory_hostname }}
+ip domain-name {{ domain_name }}
+!
+!
+spanning-tree mode mstp
+!
+aaa authorization exec default local
+!
+enable secret admin
+no aaa root
+!
+username yaworks-admin privilege 15  role network-admin secret admin
+!
+{% for uplink in uplinks %}
+interface {{ uplink.my_port }}
+   description {{ uplink.desc }} - {{ uplink.remote_port }} - {{ uplink.remote_ip }}
+   no switchport
+   ip address {{ uplink.my_ip | ipaddr('address') }}/{{ uplink.my_ip | ipaddr('prefix') }}
+   no shutdown
+ !  
+{% endfor %}
+interface Loopback0
+   ip address {{ loopback_ip }}/32
+!
+interface Management1
+!
+!
+ip routing
+!
+!
+router ospf 100
+   network 0.0.0.0/0 area 0.0.0.0
+   max-lsa 12000
+!
+management api http-commands
+   protocol http
+   no shutdown
+!
+end
+

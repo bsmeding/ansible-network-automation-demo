@@ -1,0 +1,25 @@
+---
+ospf:
+  processid: 100
+  ospf_area_default: 0
+  ospf_area_routers: 0
+  ospf_area_intern: 2
+  global:
+    - default auto-cost reference-bandwidth 100000
+    - network 0.0.0.0 255.255.255.255 area 0
+    - passive-interface default
+  b1-distsw01:
+    - network 172.18.0.0 255.255.0.0 area 2
+    - redistribute static subnets
+    - redistribute bgp 2 subnets
+
+ospf_intf_list:
+  b1-distsw01: [Ethernet0/0, Ethernet2/0, Ethernet2/1, Ethernet2/2, Ethernet2/3, Ethernet3/0, Ethernet3/1, Ethernet3/2]
+  b1-r1: [Eth0/1]
+  b1-r2: [Eth0/1]
+  b1-accsw01: [Eth0/0]
+  b1-accsw02: [Eth0/0]
+  b1-accsw03: [Eth0/0, Eth0/1]
+  b1-accsw04: [Eth0/0]
+  b1-accsw05: [Eth0/0]
+  b1-accsw06: [Eth0/0]

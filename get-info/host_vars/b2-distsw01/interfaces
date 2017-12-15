@@ -1,0 +1,24 @@
+loopback_ip: 10.199.19.3
+management_ip: 172.19.30.1
+
+def_gateway: 172.19.1.1
+
+uplinks:
+  - desc: Naar Router 1
+    my_port: Ethernet1
+    my_ip: 172.19.1.2/30
+    remote_port: Ethernet2
+    remote_ip: 172.19.1.1/30
+    ospf_area: 0
+  - desc: Naar b2-accsw01
+    my_port: Ethernet2
+    my_ip: 172.19.2.1/30
+    remote_port: Ethernet1
+    remote_ip: 172.19.2.2/30
+    ospf_area: 2
+  - desc: Naar b2-accsw02
+    my_port: Ethernet3
+    my_ip: 172.19.2.5/30
+    remote_port: Ethernet1
+    remote_ip: 172.19.2.6/30
+    ospf_area: 2

@@ -1,0 +1,266 @@
+---
+- name: Setup LLDP
+  hosts: hq
+  tasks:
+    - name: Enable LLDP on HQ devices
+      ios_config: 
+        provider: "{{ creds_core_ssh }}"
+        commands:
+        - lldp run
+   
+    - name: Wait for LLDP to start
+      pause: seconds=15 prompt="Waiting for LLDP to start"
+
+    - name: Check LLDP neighbour
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+        filter:
+        - lldp_neighbors
+        - interfaces
+      tags: [ lldp ]
+
+    - pause:
+
+- name: Create OSPF config file for HQ
+  hosts: hq
+  gather_facts: no
+  tasks:
+    - name: Generate OSPF config
+      template:
+        src: "templates/igp-{{ platform }}.j2"
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.igp.confg"
+      tags: [ ospf, template ]
+
+- name: Install OSPF config HQ
+  hosts: hq
+  gather_facts: no
+  tasks:
+    - name: Test connectivity         
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+      tags: [ ospf, connectivity ]
+
+    - name: Install OSPF template to HQ devices
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.igp.confg"
+        commit_changes: "{{ napalm_commit_changes }}"
+        replace_config: "{{ napalm_replace_config }}"
+        diff_file: "{{configs_DIR}}/{{ inventory_hostname}}/DIFF/{{inventory_hostname}}.igp.diff"
+      tags: [ ospf, install]
+
+- name: Check OSPF neigbor is running on interfaces
+  hosts: hq
+  gather_facts: no
+  vars:
+    extra_nb_no: []
+  tasks:
+    - name: Get OSPF neighbor
+      ios_command:
+        provider: "{{ creds_core_ssh }}"
+        commands: show ip ospf neighbor 
+      tags: [ ospfnb, validate ]
+      register: ospf_neighbors
+
+    - name: Verify OSPF is running on all internal interfaces
+      assert:
+        that: "'{{ item }}' in ospf_neighbors.stdout[0]"
+        msg:  "OSPF session on interface {{item}} is missing"
+      with_items: "{{ ospf_intf_list[inventory_hostname] }}"
+      tags: [ ospfnb, validate ]
+
+    - pause:
+
+- name: Setup BGP on HQ
+  hosts: hq
+  gather_facts: no
+  tasks:
+    - name: Generate BGP config
+      template:
+        src: "templates/bgp-{{ platform }}.j2"
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.bgp.confg"
+      tags: [ bgp, template ]
+
+- name: Install BGP config HQ
+  hosts: hq
+  gather_facts: no
+  tasks:
+    - name: Install BGP template to HQ devices
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.bgp.confg"
+        commit_changes: "{{ napalm_commit_changes }}"
+        replace_config: "{{ napalm_replace_config }}"
+        diff_file: "{{configs_DIR}}/{{ inventory_hostname}}/DIFF/{{inventory_hostname}}.bgp.diff"
+      tags: [ bgp, install]
+
+    - pause:
+
+- name: Check BGP neigbor is running on interfaces
+  hosts: hq
+  gather_facts: no
+  vars:
+    extra_nb_no: []
+  tasks:
+    - name: Verify BGP (NAPALM)
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+        filter: bgp_neighbors
+      tags: [ bgpnb, validate ]
+
+    - set_fact:
+        operational_bgp_peers: "{{ napalm_bgp_neighbors.global.peers }}"
+      tags: [ bgpnb, validate ]
+
+    - name: create shotlist from current BGP neighbors
+      set_fact:
+        bgp_cur_nb: "{{ bgp_cur_nb | default ([]) + [ item.key ] }}"
+      with_dict: "{{ operational_bgp_peers }}"
+      tags: [ bgpnb, validate ]
+
+    - name: Verify BGP neighbors
+      assert:
+        that: "'{{ item }}' in bgp_cur_nb"
+        msg:  "BGP Neighbor {{item}} is missing on host {{ inventory_hostname }}"
+      with_items: "{{ bgp_nb_list[inventory_hostname] }}"
+      ignore_errors: yes
+      tags: [ bgpnb, validate ]
+
+
+
+- name: setup BGP peering HQ and Branche 1
+  hosts: hq-r1:b1-r1
+  gather_facts: no
+  tasks:
+    - name: Check connection
+      ios_facts:
+        provider: "{{ creds_core_ssh }}"
+      tags: [ ebgp, test ]
+
+- name: Setup BGP on Branche1 Router 1 (External IP)
+  hosts: b1-r1
+  gather_facts: no
+  tasks:
+    - name: Generate BGP config
+      template:
+        src: "templates/bgp-{{ platform }}.j2"
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.bgp.confg"
+      tags: [ ebgp, template ]
+
+- name: Install BGP config HQ
+  hosts: b1-r1
+  gather_facts: no
+  tasks:
+    - name: Install BGP template to b1-r1
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.bgp.confg"
+        commit_changes: "{{ napalm_commit_changes }}"
+        replace_config: "{{ napalm_replace_config }}"
+        diff_file: "{{configs_DIR}}/{{ inventory_hostname}}/DIFF/{{inventory_hostname}}.bgp.diff"
+      tags: [ ebgp, install]
+
+    - pause:
+
+- name: Verify eBGP setup on HQ-R1
+  hosts: hq-r1:b1-r1
+  gather_facts: no
+  tasks:
+    - name: Verify BGP on h1-r1 and b1-r1 (NAPALM)
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+        filter: bgp_neighbors
+      tags: [ ebgp, validate ]
+
+    - set_fact:
+        operational_ebgp_peers: "{{ napalm_bgp_neighbors.global.peers }}"
+      tags: [ ebgp, validate ]
+
+    - name: create current BGP neighbors
+      set_fact:
+        bgp_cur_nb: "{{ bgp_cur_nb | default ([]) + [ item.key ] }}"
+      with_dict: "{{ operational_ebgp_peers }}"
+      tags: [ ebgp, validate ]
+
+    - name: Verify eBGP neighbors
+      assert:
+        that: "'{{ item }}' in bgp_cur_nb"
+        msg:  "BGP Neighbor {{item}} is missing on host {{ inventory_hostname }}"
+      with_items: "{{ ebgp_peers[inventory_hostname] }}"
+      tags: [ ebgp, validate ]
+
+#    - name: Check if Loopback0 is available from HQ-R1
+
+
+
+#    - name: Check if Loopback0 is available from HQ-DISTSW01
+
+#    - name: Check if Loopback0 from b1-distsw01 is available on HQ-R1  << Error
+
+
+#    - name: Check redistribut OSPF on B1-R1
+
+
+## Branche 2
+- name: eBGP setup Branche 2 (Arista met API)
+  hosts: b2-r1
+  gather_facts: no
+  tasks:     
+    - name: Check connection EAPI
+      eos_facts:
+        provider: "{{ creds_core_eapi }}"
+      tags: [ ebgp, test ]
+
+- name: Setup BGP on Branche2 Router 1 (External IP)
+  hosts: b2-r1
+  gather_facts: no
+  tasks:
+    - name: Generate BGP config
+      template:
+        src: "templates/bgp-{{ platform }}.j2"
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.bgp.confg"
+      tags: [ ebgp, template ]
+
+- name: Install BGP config HQ
+  hosts: b2-r1
+  gather_facts: no
+  tasks:
+    - name: Install BGP template to b1-r1
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.bgp.confg"
+        commit_changes: "{{ napalm_commit_changes }}"
+        replace_config: "{{ napalm_replace_config }}"
+        diff_file: "{{configs_DIR}}/{{ inventory_hostname}}/DIFF/{{inventory_hostname}}.bgp.diff"
+      tags: [ ebgp, install]
+ 
+    - pause:
+
+- name: Verify eBGP setup on HQ <-> B1 <-> B2
+  hosts: hq-r1:b1-r1:b2-r1
+  gather_facts: no
+  tasks:
+    - name: Verify BGP on h1-r1 and b1-r1 (NAPALM)
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+        filter: bgp_neighbors
+      tags: [ ebgp, validate ]
+
+    - set_fact:
+        operational_ebgp_peers: "{{ napalm_bgp_neighbors.global.peers }}"
+      tags: [ ebgp, validate ]
+
+    - name: create current BGP neighbors
+      set_fact:
+        bgp_cur_nb: "{{ bgp_cur_nb | default ([]) + [ item.key ] }}"
+      with_dict: "{{ operational_ebgp_peers }}"
+      tags: [ ebgp, validate ]
+
+    - name: Verify eBGP neighbors
+      assert:
+        that: "'{{ item }}' in bgp_cur_nb"
+        msg:  "BGP Neighbor {{item}} is missing on host {{ inventory_hostname }}"
+      with_items: "{{ ebgp_peers[inventory_hostname] }}"
+      tags: [ ebgp, validate ]
+
+      

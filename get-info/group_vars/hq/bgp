@@ -1,0 +1,34 @@
+---
+site_ASN: 1
+site_summary_subnet: 10.0.10.0/24
+
+bgp_originate_network:
+  hq-r1:
+    - Loopback0
+#  hq-r2:
+#    - Loopback0
+
+ebgp_peers:
+  hq-r1:
+    1.1.1.18:
+      - remote-as 2
+#    1.1.1.19:
+#      - remote-as 3
+
+ibgp_topology:
+  route_reflector: [hq-distsw01]
+  rr_clients: [hq-r1, hq-r2]
+
+
+bgp_nb_list:
+  hq-distsw01: [10.199.10.1, 10.199.10.2]
+  hq-r1: 
+    10.199.10.3
+#  hq-r2: 
+#    10.199.10.3
+
+
+ospf_redis_validate:
+  hq-distsw01:
+    - 10.199.18.3
+    - 10.199.19.3

@@ -1,0 +1,17 @@
+vlans:
+  - vlan_id: 10
+    vlan_name: Servers
+  - vlan_id: 11
+    vlan_name: Uplink R1
+  - vlan_id: 12
+    vlan_name: Uplink R2  
+  - vlan_id: 20
+    vlan_name: Hardbeat
+  - vlan_id: 30
+    vlan_name: Management
+  - vlan_id: 40
+    vlan_name: Database
+  - vlan_id: 50
+    vlan_name: DMZ
+  - vlan_id: 999
+    vlan_name: NietInGebruik

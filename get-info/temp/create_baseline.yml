@@ -1,0 +1,21 @@
+---
+- name: Aanmaken device configs voor Routers HQ en Branche1
+  hosts: routers-hq:routers-branche1
+  tasks:
+    - name: Generate Full template
+      template:
+        src: templates/baseline-router.j2
+        dest: "CFGS/{{ inventory_hostname}}.baseline.confg"
+      tags: template
+
+- name: Aanmaken device configs voor switches HQ en BRanche1
+  hosts: switches-hq:switches-branche1
+  tasks:
+    - name: Generate Full template
+      template:
+        src: templates/baseline-switch.j2
+        dest: "CFGS/{{ inventory_hostname}}.baseline.confg"
+      tags: template
+
+
+

@@ -1,0 +1,60 @@
+loopback_ip: 10.199.18.3
+management_ip: 172.18.30.1
+
+def_gateway: 172.18.1.1
+
+uplinks:
+  - desc: Naar Router 1
+    my_port: Ethernet0/0
+    my_ip: 172.18.1.2/30
+    remote_port: Ethernet0/1
+    remote_ip: 172.18.1.1/30
+    ospf_area: 0
+  - desc: Naar Management net
+    my_port: Ethernet0/1
+    my_ip: 172.16.0.254/24
+    remote_port: Netwerk VMware
+    remote_ip: 172.16.0.0/24
+    ospf_area: 0
+  - desc: Naar b1-accsw01
+    my_port: Ethernet2/0
+    my_ip: 172.18.2.1/30
+    remote_port: Ethernet0/0
+    remote_ip: 172.18.2.2/30
+    ospf_area: 2
+  - desc: Naar b1-accsw02
+    my_port: Ethernet2/1
+    my_ip: 172.18.2.5/30
+    remote_port: Ethernet0/0
+    remote_ip: 172.18.2.6/30
+    ospf_area: 2
+  - desc: Naar b1-accsw03
+    my_port: Ethernet2/2
+    my_ip: 172.18.2.9/30
+    remote_port: Ethernet0/0
+    remote_ip: 172.18.2.10/30
+    ospf_area: 2
+  - desc: Naar b1-accsw03
+    my_port: Ethernet2/3
+    my_ip: 172.18.2.13/30
+    remote_port: Ethernet0/0
+    remote_ip: 172.18.2.14/30
+    ospf_area: 2
+  - desc: Naar b1-accsw04
+    my_port: Ethernet3/0
+    my_ip: 172.18.2.17/30
+    remote_port: Ethernet0/0
+    remote_ip: 172.18.2.18/30   
+    ospf_area: 2
+  - desc: Naar b1-accsw05
+    my_port: Ethernet3/1
+    my_ip: 172.18.2.21/30
+    remote_port: Ethernet0/0
+    remote_ip: 172.18.2.22/30
+    ospf_area: 2
+  - desc: Naar b1-accsw06
+    my_port: Ethernet3/2
+    my_ip: 172.18.2.25/30
+    remote_port: Ethernet0/0
+    remote_ip: 172.18.2.26/30    
+    ospf_area: 2

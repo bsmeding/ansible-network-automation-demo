@@ -1,0 +1,27 @@
+---
+site_ASN: 2
+site_summary_subnet: 172.18.0.0/16
+
+bgp_originate_network:
+  b1-r1:
+    - Loopback0
+  b1-r2:
+    - Loopback0
+
+ebgp_peers:
+  b1-r1:
+    1.1.1.1:
+      - remote-as 1
+    1.1.1.19:
+      - remote-as 3
+
+ibgp_topology:
+  route_reflector: [b1-distsw01]
+  rr_clients: [b1-r1]
+
+bgp_nb_list:
+  hq-distsw01: [10.199.18.1, 10.199.18.2]
+  hq-r1:
+    10.199.18.3
+  hq-r2:
+    10.199.18.3

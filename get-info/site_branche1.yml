@@ -1,0 +1,196 @@
+---
+- name: Setup LLDP
+  hosts: b1-distsw01
+  tasks:
+    - name: Enable LLDP on Branche1 devices
+      ios_config: 
+        provider: "{{ creds_core_ssh }}"
+        commands:
+        - lldp run
+   
+    - name: Wait for LLDP to start
+      pause: seconds=5 prompt="Waiting for LLDP to start"
+
+    - name: Check LLDP neighbour
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+        filter:
+        - lldp_neighbors
+        - interfaces
+      tags: [ lldp ]
+
+
+- name: Create OSPF config file for Branche1
+  hosts: branche1
+  gather_facts: no
+  tasks:
+    - name: Generate OSPF config
+      template:
+        src: "templates/igp-{{ platform }}.j2"
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.igp.confg"
+      tags: [ ospf, template ]
+
+- name: Install OSPF config Branche1
+  hosts: branche1
+  gather_facts: no
+  tasks:
+    - name: Test connectivity         
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+      tags: [ ospf, connectivity ]
+
+    - name: Install OSPF template to Branche1 devices
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.igp.confg"
+        commit_changes: "{{ napalm_commit_changes }}"
+        replace_config: "{{ napalm_replace_config }}"
+        diff_file: "{{configs_DIR}}/{{ inventory_hostname}}/DIFF/{{inventory_hostname}}.igp.diff"
+      tags: [ ospf, install]
+
+- name: Check OSPF neigbor is running on interfaces b1-distsw01
+  hosts: b1-distsw01
+  gather_facts: no
+  vars:
+    extra_nb_no: []
+  tasks:
+    - name: Get OSPF neighbor
+      ios_command:
+        provider: "{{ creds_core_ssh }}"
+        commands: show ip ospf neighbor 
+      tags: [ ospfnb, validate ]
+      register: ospf_neighbors
+
+    - name: Verify OSPF is running on all internal interfaces
+      assert:
+        that: "'{{ item }}' in ospf_neighbors.stdout[0]"
+        msg:  "OSPF session on interface {{item}} is missing"
+      with_items: "{{ ospf_intf_list[inventory_hostname] }}"
+      tags: [ ospfnb, validate ]
+
+
+- name: Setup BGP on Branche1
+  hosts: b1-distsw01
+  gather_facts: no
+  tasks:
+    - name: Generate BGP config
+      template:
+        src: "templates/bgp-{{ platform }}.j2"
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.bgp.confg"
+      tags: [ bgp, template ]
+
+- name: Setup BGP on b1-distsw01
+  hosts: b1-distsw01
+  gather_facts: no
+  tasks:
+    - name: Generate BGP config
+      template:
+        src: "templates/bgp-{{ platform }}.j2"
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.bgp.confg"
+      tags: [ bgp, template ]
+
+- name: Install BGP config b1-distsw01
+  hosts: b1-distsw01
+  gather_facts: no
+  tasks:
+    - name: Install BGP template to b1-distsw01
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.bgp.confg"
+        commit_changes: "{{ napalm_commit_changes }}"
+        replace_config: "{{ napalm_replace_config }}"
+        diff_file: "{{configs_DIR}}/{{ inventory_hostname}}/DIFF/{{inventory_hostname}}.bgp.diff"
+      tags: [ bgp, install]
+
+# Deploy access-switch ports
+- name: Create dynamic access-port list
+  hosts: accsw-branche1
+  gather_facts: no
+  tasks:
+    - name: Generate access-port  config
+      template:
+        src: "templates/access-ports-{{ platform }}.j2"
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.accessports.confg"
+      tags: [ accessports, template ]
+
+- name: Install access-port config (always changed)
+  hosts: accsw-branche1
+  gather_facts: no
+  tasks:
+    - name: Install access-port config file to access switches
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.accessports.confg"
+        commit_changes: "{{ napalm_commit_changes }}"
+        replace_config: False
+        diff_file: "{{configs_DIR}}/{{ inventory_hostname}}/DIFF/{{inventory_hostname}}.accessports.diff"
+      tags: [ accessports, install]
+
+
+- name: Set logging  Cisco IOS (core module)
+  hosts: branche1
+  gather_facts: no
+  vars:
+    syslog_servers:
+      - "logging host {{ syslog_server }}"
+  tasks:
+    - name: configure host logging "{{ syslog_server }}"
+      ios_logging:
+        provider: "{{ creds_core_ssh }}"
+        dest: host
+        name: "{{ syslog_server }}"
+        state: present
+      tags: [ logging ]
+
+
+    - name: Get installed syslog servers
+      ios_command:
+        provider: "{{ creds_core_ssh }}"
+        commands: "show run | inc logging host"
+      register: output_logging
+      tags: [ logging ]
+
+    - set_fact:
+        current_syslog: "{{ output_logging.stdout_lines[0] }}"
+      tags: [ logging ]
+
+    - name: Find extra Logging servers that should not be configured
+      set_fact:
+        extra_syslog_servers: "{{ current_syslog | difference(syslog_servers) | list }}"
+      tags: [ logging ]
+
+    - name: "Construct 'no logging host...' command to remove unneeded servers"
+      set_fact:
+        no_syslog_servers: "{{ lookup('template', 'templates/no_syslog_servers.j2') | from_yaml }}"
+      tags: [ logging ]
+
+    - name: Remove unneeded NTP servers
+      ios_config:
+        provider: "{{ creds_core_ssh }}"
+        lines: "{{ no_syslog_servers }}"
+      when: no_syslog_servers
+      tags: [ logging ]
+
+
+# Set SNMP monitoring
+- name: Set SNMP on ALL (NAPALM)
+  hosts: branche1
+  gather_facts: no
+  tasks:
+    - name: Generate Logging host config
+      template:
+        src: "templates/snmp-{{ platform }}.j2"
+        dest: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.snmp.confg"
+      tags: [ snmp, template ]
+
+    - name: Install SNMP template
+      napalm_install_config:
+        provider: "{{ creds_napalm }}"
+        config_file: "{{configs_DIR}}/{{ inventory_hostname}}/{{ inventory_hostname}}.snmp.confg"
+        commit_changes: "{{ napalm_commit_changes }}"
+        replace_config: False
+        diff_file: "{{configs_DIR}}/{{ inventory_hostname}}/DIFF/{{inventory_hostname}}.snmp.diff"
+      tags: [ snmp, install]
+
+
+
