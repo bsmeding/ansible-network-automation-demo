@@ -1,0 +1,59 @@
+[local]
+localhost ansible_connection=local
+
+
+##### GROUP PER LOCATION AND TYPE
+[yaworks:children]
+branche1
+
+[branche1:children]
+routers-branche1
+distsw-branche1
+accsw-branche1
+
+[routers:children]
+routers-branche1
+
+[switches:children]
+distsw-branche1
+accsw-branche1
+
+[core-switches]
+b1-distsw01
+
+#### GROUP PER PLATFORM  {{ Nodig voor provider settings
+[cisco]
+b1-r1
+b1-distsw01
+b1-accsw01
+b1-accsw02
+b1-accsw03
+b1-accsw04
+b1-accsw05
+b1-accsw06
+b1-accsw07
+
+###### DEVICES BRANCHE -1   10.199.<BRANCHE-ID>.1-10
+[routers-branche1]
+b1-r1 ansible_host=1.1.1.18
+
+[distsw-branche1]		#   TOR Switches 10.199.<BRANCHE-ID>.1-10 (L3)      10.199.<BRANCHE-ID>.11-20 (L2)
+b1-distsw01 ansible_host=10.199.18.3
+
+[accsw-branche1]		#   SPINE Switches  172.<BRANCHE-ID>.<MNMT-SUBN>.21-50
+b1-accsw01 ansible_host=10.199.18.21
+b1-accsw02 ansible_host=10.199.18.22
+b1-accsw03 ansible_host=10.199.18.23
+b1-accsw04 ansible_host=10.199.18.24
+b1-accsw05 ansible_host=10.199.18.25
+b1-accsw06 ansible_host=10.199.18.26
+
+
+###### Management Servers
+[man-servers]
+#tools ansible_host=172.16.0.11
+
+
+[servers-ansible:children]
+#local
+

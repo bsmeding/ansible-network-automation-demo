@@ -1,0 +1,8 @@
+[
+    {
+        "b1-accsw06": {
+            "interface": "Loopback0", 
+            "speed": 8000
+        }
+    }
+]

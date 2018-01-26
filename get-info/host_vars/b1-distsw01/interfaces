@@ -58,3 +58,9 @@ uplinks:
     remote_port: Ethernet0/0
     remote_ip: 172.18.2.26/30    
     ospf_area: 2
+  - desc: Naar b1-accsw07
+    my_port: Ethernet7/1
+    my_ip: 172.18.2.29/30
+    remote_port: GigabitEthernet1
+    remote_ip: 172.18.2.30/30
+    ospf_area: 2

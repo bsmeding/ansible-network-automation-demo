@@ -1,0 +1,24 @@
+---
+- name: Generate list of interfaces
+  hosts: b1-accsw06
+  gather_facts: no
+  vars:
+    correctspeed: "1000"
+  tasks:
+    - name: Check interface list
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+        filter:
+        - interfaces
+      tags: [ lldp ]
+
+    - debug: 
+        var: napalm_interfaces
+
+    - name: Check speed is {{ correctspeed }}
+#      debug:
+#        msg: "MATCH {{ item.key }}"
+      set_fact: 
+        intf_wrong_speed: "{{ intf_wrong_speed|default({}) }}"
+      with_dict: "{{ napalm_interfaces }}"
+      when: "item.value.speed == 1000"

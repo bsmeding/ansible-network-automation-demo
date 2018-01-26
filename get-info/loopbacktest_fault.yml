@@ -1,17 +1,13 @@
----
-- name: Run ping  commands Branche1 switches
+\---
+- name: Run ping  commands B1 Switches when SW03 is offline
   connection: local
-  hosts: accsw-branche1
+  hosts: b1-accsw01
   gather_facts: false
   vars:
     loopbacks:
       b1-distsw01: 10.199.18.3
       b1-accsw01: 10.199.18.21
-      b1-accsw02: 10.199.18.22
-      b1-accsw03: 10.199.18.23
       b1-accsw04: 10.199.18.24
-      b1-accsw05: 10.199.18.25
-      b1-accsw06: 10.199.18.26
 
   tasks:
     - name: run ping to every other host
@@ -26,10 +22,10 @@
 
 # bepalen de output, dit is nodig om strakt een fail op te kunnen maken als ping fout gaat
     - debug:
-       msg: "{{ ping_result.results[1].stdout  }}"
+       msg: "{{ ping_result.results[1].stdout[0]  }}"
 
     - name: Fail when not all pings are succesful
       fail: msg="{{ ansible_host }} cannot reach all devices"
-      #failed_when: "'rate is 0 percent' in ping_result.stdout_lines[0][4]"
-      when: ("'100 percent' not in ping_result.results[1].stdout")
+#      failed_when: "'rate is 0 percent' in ping_result.stdout_lines[0][4]"
+      when: ("'100 percent' not in ping_result.results[1].stdout[0]")
 

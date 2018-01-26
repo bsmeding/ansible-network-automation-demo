@@ -1,0 +1,40 @@
+---
+- name: Generate list of interfaces
+  hosts: b1-accsw06
+  gather_facts: no
+  vars:
+    correctspeed: "1000"
+    showdebug: False
+  tasks:
+    - name: Check interface list
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+        filter:
+        - interfaces
+      tags: [ lldp ]
+
+    - debug: 
+        var: napalm_interfaces
+      when: "showdebug == True"
+
+    - debug: msg="Add 'stdout_callback = skippy' to ansible.cfg to remove skipped items in your playbook"
+
+    - name: Filter interfaces speed is not {{ correctspeed }}
+      set_fact: 
+        intf_wrong_speed: "{{ intf_wrong_speed|default([]) + [ {inventory_hostname:{'interface': item.key, 'speed': item.value.speed}} ] }}"
+      with_dict: "{{ napalm_interfaces }}"
+      when: 
+        - "item.value.speed != {{ correctspeed }}"
+        - "item.value.is_up == true"
+        - "item != 'Loopback0'"
+
+    - debug:
+        var: intf_wrong_speed  
+      when: "showdebug == True"
+
+    - copy:
+        content: "{{ intf_wrong_speed |  to_nice_json}}"
+        dest: "./interface_wrong_speed.json"
+
+
+ 

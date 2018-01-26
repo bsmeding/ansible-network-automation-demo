@@ -1,0 +1,12 @@
+---
+- name: Set connection to VPC5 to Half Duplex
+  hosts: b1-accsw03
+  tasks:
+    - name: Set Interface Eth2/1 to half duplex
+      ios_config:
+        provider: "{{ creds_core_ssh }}"
+        commands:
+        - interface Ethernet2/1
+        - duplex half
+
+

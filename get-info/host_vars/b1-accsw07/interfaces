@@ -5,7 +5,7 @@ def_gateway: 172.18.2.29
 
 uplinks:
   - desc: Naar b1-distsw01
-    my_port: Ethernet0/0
+    my_port: GigabitEthernet0/0
     my_ip: 172.18.2.30/30
-    remote_port: Ethernet3/3
+    remote_port: Ethernet7/1
     remote_ip: 172.18.2.29/30
