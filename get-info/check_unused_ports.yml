@@ -1,0 +1,84 @@
+---
+- name: Disable unused interfaces
+  hosts: b1-accsw01
+  gather_facts: no
+  vars:
+    unusedvlan: "999"
+    change_disabled_interfaces: True
+    change_shutdown_interfaces: True
+    showdebug: True
+    filter_pattern: '.*[Ee]thernet.*'
+  tasks:
+    - name: Check interface list
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+        filter:
+        - facts
+        - interfaces
+
+    - debug: 
+        var: napalm_interfaces
+      when: "showdebug == True"
+
+    - name: Filter interfaces that are disabled
+      set_fact: 
+        disabled_intfs: "{{ disabled_intfs|default([]) + [ item.key ] }}"
+      with_dict: "{{ napalm_interfaces }}"
+      when: 
+        - "item.value.is_enabled == false"
+        - "change_disabled_interfaces == True"
+
+    - debug: 
+        var: disabled_intfs
+      when: 
+        - "showdebug == True"
+        - "change_disabled_interfaces == True"
+
+    - name: Disable unused ports
+      ios_config:
+        provider: "{{ creds_core_ssh }}"
+        lines:
+          - description NotInUse
+          - switchport access vlan {{ unusedvlan }}
+          - shutdown
+        parents: "interface {{ item }}"
+      with_items: "{{ disabled_intfs }}"
+      when: 
+        - "change_disabled_interfaces == True"
+        - "napalm_facts.vendor == 'Cisco'"
+ 
+## Nu interfaces welke niet op shutdown staan, maar geen link hebben
+
+    - name: Filter interfaces that are down (but not disabled)
+      set_fact: 
+        down_intfs: "{{ down_intfs|default([]) + [ item.key ] }}"
+      with_dict: "{{ napalm_interfaces }}"
+      when: 
+        - "item.value.is_enabled == true"
+        - "item.value.is_up == false"
+        - "change_shutdown_interfaces == True"
+
+
+    - name: filter out Vlan
+      set_fact:
+        filtered_intfs: "{{ down_intfs | map('regex_search',filter_pattern) | select('string') | list }}"
+
+    - debug: 
+        var: filtered_intfs
+      when: 
+        - "showdebug == True"
+        - "change_shutdown_interfaces == True"
+
+
+    - name: Disable down ports
+      ios_config:
+        provider: "{{ creds_core_ssh }}"
+        lines:
+          - description NotInUse
+          - switchport access vlan {{ unusedvlan }}
+          - shutdown
+        parents: "interface {{ item }}"
+      with_items: "{{ filtered_intfs }}"
+      when: 
+        - "change_down_interfaces == True"
+        - "napalm_facts.vendor == 'Cisco'"
