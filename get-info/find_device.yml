@@ -1,0 +1,23 @@
+---
+- name: Find device on MAC
+  hosts: distsw-branche1:accsw-branche1
+  gather_facts: no
+  vars:
+    devicemac: '50:00:00:06:00:00'
+  tasks:
+    - name: Get ARP table
+      napalm_get_facts:
+        provider: "{{ creds_napalm }}"
+        filter:
+        - arp_table
+
+    - name: Convert Mac addres
+      set_fact: macaddres="{{ devicemac | hwaddr }}"
+
+    - name: Check if MAC is listed
+      set_fact: 
+        active_intfs: "{{ active_intfs|default([]) + [ {inventory_hostname:{'interface': item.interface, 'age': item.age}} ] }}"
+      with_items: "{{ napalm_arp_table }}"
+      when: 
+        - "item.mac == macaddres"
+
