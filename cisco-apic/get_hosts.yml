@@ -1,0 +1,22 @@
+---
+- name: Connect to Cisco APIC
+  hosts: sandboxapi
+  gather_facts: no
+  vars:
+    aci_login: &aci_login
+      host: '{{ ansible_host }}'
+      username: '{{ aci_username }}'
+      password: '{{ aci_password }}'
+      validate_certs: no
+  tasks:
+    - name: get ticket
+      aci_rest:
+          <<: *aci_login
+          method: get
+          path: /sandbox/apic_em/api/v1/ticket
+      register: raw 
+      delegate_to: localhost
+    - debug: var=raw
+
+
+

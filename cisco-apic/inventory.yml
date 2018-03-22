@@ -1,0 +1,6 @@
+[local]
+localhost ansible_host=127.0.0.1
+
+[cisco-online]
+sandboxapi ansible_host=https://devnetapi.cisco.com
+
