@@ -10,11 +10,11 @@
       file:
         path: "CFGS/{{ inventory_hostname }}"
         state: directory
+    - name: test
+      debug:
+        msg: "test" 
 
 # Create base config files
-
-
-
 
 
 
